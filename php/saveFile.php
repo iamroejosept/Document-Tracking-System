@@ -8,6 +8,7 @@ date_default_timezone_set('Asia/Manila');
 
 $message = "";
 $status = "";
+$office = "";
 
 // Check if the category id parameter is set in the URL
 if(isset($_POST['nameEditID'])) {
@@ -24,10 +25,20 @@ if(isset($_POST['nameEditID'])) {
     $editCategoryName = mysqli_real_escape_string($conn, $_POST['nameEditCategoryName']);
     $editBarcode = mysqli_real_escape_string($conn, $_POST['nameEditBarcode']);
     $editDescription = mysqli_real_escape_string($conn, $_POST['nameEditDescription']);
+    $editProvince = mysqli_real_escape_string($conn, $_POST['namefileProvince']);
+    $editCityMunicipality = mysqli_real_escape_string($conn, $_POST['namefileCityMunicipality']);
+
+    $query ="SELECT office_id_num FROM OfficeSettings WHERE Province='$editProvince' AND cityMunicipality='$editCityMunicipality'";
+    $result = mysqli_query($conn, $query);
+
+    if($result){
+        $row = mysqli_fetch_assoc($result);
+        $office = $row['office_id_num'];
+    }
 
     if($_FILES['nameEditInputFile']['name'] == null){
         // Build the SQL query to update the category record
-        $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription' WHERE id_num = '$editID'";
+        $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription', office_id_num = '$office' WHERE id_num = '$editID'";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -47,12 +58,14 @@ if(isset($_POST['nameEditID'])) {
         $sql = "SELECT * FROM Files WHERE id_num = '$editID'";
         $result = mysqli_query($connect, $sql);
         $row = mysqli_fetch_array($result);
-        $file_path = '../files/'.$row['File'];
-        unlink($file_path);
+        if (!empty($row['File'])) {
+            $file_path = '../files/'.$row['File'];
+            unlink($file_path);
+        }
 
         if (move_uploaded_file($fileTmpName, $uploadPath)) {
             // Build the SQL query to update the category record
-            $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', File = '$fileName', Description = '$editDescription' WHERE id_num = '$editID'";
+            $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', File = '$fileName', Description = '$editDescription', office_id_num = '$office' WHERE id_num = '$editID'";
             
             // Execute the query
             if(mysqli_query($conn, $sql)) {

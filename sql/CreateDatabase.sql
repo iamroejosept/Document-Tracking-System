@@ -6,8 +6,8 @@ USE DTS;
 ## Create Document Category table
 CREATE TABLE DocumentCategory (
   id_num int(50) unsigned ZEROFILL auto_increment,
-  DocumentCategoryName varchar(255) NOT NULL,
-  Description varchar(255) NOT NULL,
+  DocumentCategoryName varchar(255) NULL,
+  Description varchar(255) NULL,
   
   PRIMARY KEY  (id_num)
 );
@@ -15,13 +15,13 @@ CREATE TABLE DocumentCategory (
 ## Create Files table
 CREATE TABLE Files (
   id_num int(50) unsigned ZEROFILL auto_increment,
-  office_id_num int(50) NOT NULL,
-  Barcode varchar(255) NOT NULL,
-  Category varchar(255) NOT NULL,
-  Description varchar(255) NOT NULL,
-  File varchar(255) NOT NULL,
-  UploadedBy varchar(255) NOT NULL,
-  Date varchar(255) NOT NULL,
+  office_id_num int(50) NULL,
+  Barcode varchar(255) NULL,
+  Category varchar(255) NULL,
+  Description varchar(255) NULL,
+  File varchar(255) NULL,
+  UploadedBy varchar(255) NULL,
+  Date varchar(255) NULL,
 
   PRIMARY KEY  (id_num)
 );
@@ -29,11 +29,11 @@ CREATE TABLE Files (
 ## Create Users table
 CREATE TABLE Users (
   id_num int(50) unsigned ZEROFILL auto_increment,
-  Fullname varchar(255) NOT NULL,
-  Username varchar(255) NOT NULL,
-  Password varchar(255) NOT NULL,
-  AccessLevel varchar(255) NOT NULL,
-  Status varchar(255) NOT NULL,
+  Fullname varchar(255) NULL,
+  Username varchar(255) NULL,
+  Password varchar(255) NULL,
+  AccessLevel varchar(255) NULL,
+  Status varchar(255) NULL,
 
   PRIMARY KEY  (id_num)
 );
@@ -41,9 +41,8 @@ CREATE TABLE Users (
 ## Create Office Settings table
 CREATE TABLE OfficeSettings (
   office_id_num int(50) unsigned ZEROFILL auto_increment,
-  Region varchar(255) NOT NULL,
-  Province varchar(255) NOT NULL,
-  cityMunicipality varchar(255) NOT NULL,
+  Province varchar(255) NULL,
+  cityMunicipality varchar(255) NULL,
 
   PRIMARY KEY  (office_id_num)
 );
@@ -99,27 +98,18 @@ INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
 INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
                         'Ballot Box Contents', '');   
 
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Mimaropa', 'Palawan', 'Puerto Princesa City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Zamboanga Peninsula', 'Zamboanga del Sur', 'Pagadian City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Caraga', 'Agusan del Norte', 'Butuan City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Cagayan Valley', 'Cagayan', 'Tuguegarao City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Eastern Visayas', 'Leyte', 'Tacloban City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Central Visayas', 'Cebu', 'Cebu City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Zamboanga Peninsula', 'Zamboanga Sibugay', 'Ipil');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Soccsksargen', 'South Cotabato', 'Koronadal City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Cagayan Valley', 'Isabela', 'Ilagan City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Northern Mindanao', 'Bukidnon', 'Malaybalay City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Davao Region', 'Davao Oriental', 'Mati City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Ilocos Region', 'La Union', 'San Fernando City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Mimaropa', 'Romblon', 'Romblon');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Bicol Region', 'Sorsogon', 'Sorsogon City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Central Luzon', 'Zambales', 'Iba');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Eastern Visayas', 'Samar', 'Catbalogan City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Ilocos Region', 'Ilocos Norte', 'Laoag City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Northern Mindanao', 'Lanao del Norte', 'Iligan City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Zamboanga Peninsula', 'Zamboanga del Norte', 'Dipolog City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Cagayan Valley', 'Nueva Vizcaya', 'Bayombong');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Central Visayas', 'Bohol', 'Tagbilaran City');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Soccsksargen', 'Sarangani', 'Alabel');
-INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Caraga', 'Dinagat Islands', 'San Jose');
-                                                                                                                                                                                                                                                                                                                                                                     
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Atok');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Baguio');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Bakun');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Bokod');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Buguias');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Itogon');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Kabayan');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Kapangan');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Kibungan');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'La Trinidad');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Mankayan');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Sablan');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Tuba');
+INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Tublay');
+                                                                                    

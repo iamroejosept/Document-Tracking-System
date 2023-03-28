@@ -17,12 +17,11 @@ $status = "";
         die("Connection failed: " . mysqli_connect_error());
     }
     
-    $region = mysqli_real_escape_string($conn, $_POST['addRegion']);
     $province = mysqli_real_escape_string($conn, $_POST['addProvince']);
     $cityMunicipality = mysqli_real_escape_string($conn, $_POST['addCityMunicipality']);
     
     // Build the SQL query to add the category record
-    $sql = "INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('$region', '$province', '$cityMunicipality')";
+    $sql = "INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('$province', '$cityMunicipality')";
     
     // Execute the query
     if(mysqli_query($conn, $sql)) {

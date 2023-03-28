@@ -21,12 +21,11 @@ if(isset($_POST['editID'])) {
     
     // Escape the following to prevent SQL injection
     $officeID = mysqli_real_escape_string($conn, $_POST['editID']);
-    $officeRegion = mysqli_real_escape_string($conn, $_POST['editRegion']);
     $officeProvince = mysqli_real_escape_string($conn, $_POST['editProvince']);
     $officeCityMunicipality = mysqli_real_escape_string($conn, $_POST['editCityMunicipality']);
     
     // Build the SQL query to update the category record
-    $sql = "UPDATE OfficeSettings SET Region = '$officeRegion', Province = '$officeProvince', cityMunicipality = '$officeCityMunicipality' WHERE id_num = '$officeID'";
+    $sql = "UPDATE OfficeSettings SET Province = '$officeProvince', cityMunicipality = '$officeCityMunicipality' WHERE office_id_num = '$officeID'";
     
     // Execute the query
     if(mysqli_query($conn, $sql)) {

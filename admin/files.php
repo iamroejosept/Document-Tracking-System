@@ -15,7 +15,7 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Document Tracking System</title>
+   <title>Document Tracking System</title>
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
@@ -446,7 +446,6 @@
                               <th>Barcode</th>
                               <th>Category</th>
                               <th>Description</th>
-                              <th>File</th>
                               <th>Uploaded by</th>
                               <th>Date</th>
                               <th>Office</th>
@@ -469,20 +468,18 @@
                                     $Date = $row['Date'];
                                     $office_ID = $row['office_id_num'];
                                     $office="";
-                                    $office_region="";
                                     $office_province="";
                                     $office_cityMunicipality="";
                                     $icon = '';
 
-                                    $sql ="SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
+                                    $sql ="SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
                                     $result1 = mysqli_query($connect, $sql);
 
                                     if($result1){
                                        $row1 = mysqli_fetch_assoc($result1);
-                                       $office_region=$row1['Region'];
                                        $office_province=$row1['Province'];
                                        $office_cityMunicipality=$row1['cityMunicipality'];
-                                       $office = "{$office_region}, {$office_province}, {$office_cityMunicipality}";
+                                       $office = "{$office_province}, {$office_cityMunicipality}";
                                     }
 
                                     if($FileType == 'docx' || $FileType == 'doc'){
@@ -493,7 +490,9 @@
                                        $icon = "<img src='../asset/img/powerpoint.png' width='50' height='50'>";
                                     }else if($FileType == 'pdf'){
                                        $icon = "<img src='../asset/img/pdf-file.png' width='50' height='50'>";
-                                    }else if($FileType == 'txt'){
+                                    }else if($FileType == ''){
+                                       $icon = "";
+                                    }else{
                                        $icon = "<img src='../asset/img/file.png' width='50' height='50'>";
                                     }
                                     
@@ -504,12 +503,11 @@
                                           <td>$Barcode</td>
                                           <td>$Category</td>
                                           <td>$Description</td>
-                                          <td>$File</td>
                                           <td>$UploadedBy</td>
                                           <td>$Date</td>
                                           <td>$office</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-description='$Description' data-office-region='$office_region' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>Update</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-description='$Description' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>View</a>
                                              <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-file-id='$FileId'>
                                                 <i class='fa fa-trash-alt'></i>Delete
                                              </a>
@@ -552,7 +550,7 @@
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Category Name</label>
-                                    <select class="form-control" name="nameEditCategoryName" id="editCategoryName">
+                                    <select class="form-control" name="nameEditCategoryName" id="editCategoryName" disabled>
                                     <?php 
                                           $query = "SELECT * FROM DocumentCategory";  
                                           $result = mysqli_query($connect, $query);
@@ -562,7 +560,7 @@
                                                 $DocumentCategoryName = $row['DocumentCategoryName'];
                                                 
                                                 echo "  
-                                                <option>$DocumentCategoryName</option>
+                                                <option value='$DocumentCategoryName'>$DocumentCategoryName</option>
                                                 ";
                                              }  
                                           }  
@@ -573,16 +571,57 @@
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Barcode</label>
-                                    <input type="text" class="form-control" name="nameEditBarcode" id="editBarcode" placeholder="Barcode">
+                                    <input type="text" class="form-control" name="nameEditBarcode" id="editBarcode" placeholder="Barcode" disabled>
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
                                     <label class="float-left">Description</label>
-                                    <textarea class="form-control" id="editDescription" name="nameEditDescription" placeholder="Description"></textarea>
+                                    <textarea class="form-control" id="editDescription" name="nameEditDescription" placeholder="Description" disabled></textarea>
                                  </div>
                               </div>
-                              
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="float-left">Province</label>
+                                    <select class="form-control" name="namefileProvince" id="editFileProvince" disabled>
+                                       <?php 
+                                          $query = "SELECT DISTINCT Province FROM OfficeSettings";  
+                                          $result = mysqli_query($connect, $query);
+
+                                          if($result != ''){
+                                             while($row = mysqli_fetch_array($result)){  
+                                                $Province = $row['Province'];
+                                                
+                                                echo "  
+                                                <option value='$Province'>$Province</option>
+                                                ";
+                                             }  
+                                          }  
+                                       ?>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="float-left">City/Municipality</label>
+                                    <select class="form-control" name="namefileCityMunicipality" id="editFileCityMunicipality" disabled>
+                                       <?php 
+                                          $query = "SELECT DISTINCT cityMunicipality FROM OfficeSettings";  
+                                          $result = mysqli_query($connect, $query);
+
+                                          if($result != ''){
+                                             while($row = mysqli_fetch_array($result)){  
+                                                $cityMunicipality = $row['cityMunicipality'];
+                                                
+                                                echo "  
+                                                <option value='$cityMunicipality'>$cityMunicipality</option>
+                                                ";
+                                             }  
+                                          }  
+                                       ?>
+                                    </select>
+                                 </div>
+                              </div>
                            </div>
                         </div>
                      </div>
@@ -591,7 +630,8 @@
                   <div class="card-footer">
                      <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
                      <input type="hidden" name="nameEditID" id="hiddenId">
-                     <button type="submit" class="btn btn-info" style="background-color: rgb(22,94,155);">Save</button>
+                     <button type="button" id="editButton" class="btn btn-info" style="background-color: rgb(22,94,155);">Edit</button>
+                     <button type="submit" id="saveButton" class="btn btn-info" style="background-color: rgb(22,94,155); display: none;">Save</button>
                   </div>
                </form>
             </div>
@@ -668,21 +708,21 @@
                                     <textarea class="form-control" name="fileDescription" placeholder="Description"></textarea>
                                  </div>
                               </div>
-                              <div class="col-md-4">
+                              <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">Region</label>
-                                    <select class="form-control" name="fileRegion" onchange="getProvinces(this.value)">
-                                       <option selected disabled>Select a region first</option>
+                                    <label class="float-left">Province</label>
+                                    <select class="form-control" name="fileProvince" id="fileProvince">
+                                       <option selected disabled>Choose Province</option>
                                        <?php 
-                                          $query = "SELECT DISTINCT Region FROM OfficeSettings";  
+                                          $query = "SELECT DISTINCT Province FROM OfficeSettings ORDER BY Province ASC";  
                                           $result = mysqli_query($connect, $query);
 
-                                          if($result != ''){
+                                          if(mysqli_num_rows($result) > 0){
                                              while($row = mysqli_fetch_array($result)){  
-                                                $officeRegion = $row['Region'];
-
+                                                $province = $row['Province'];
+                                                
                                                 echo "  
-                                                <option value='$officeRegion'>$officeRegion</option>
+                                                <option value='$province'>$province</option>
                                                 ";
                                              }  
                                           }  
@@ -690,15 +730,7 @@
                                     </select>
                                  </div>
                               </div>
-                              <div class="col-md-4">
-                                 <div class="form-group">
-                                    <label class="float-left">Province</label>
-                                    <select class="form-control" name="fileProvince" id="fileProvince" onchange="getCities(this.value)">
-                                       <option selected disabled>Select a region first</option>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-4">
+                              <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">City/Municipality</label>
                                     <select class="form-control" name="fileCityMunicipality" id="fileCityMunicipality">
@@ -756,6 +788,8 @@
          var file_category = button.getAttribute('data-file-category');
          var file_barcode = button.getAttribute('data-file-barcode');
          var file_description = button.getAttribute('data-file-description');
+         var file_province = button.getAttribute('data-office-province');
+         var file_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
          
          document.getElementById('hiddenId').value = file_id;
          document.getElementById('labelEditInputFile').innerHTML = file;
@@ -766,40 +800,62 @@
          var options = selectElement.options;
 
          for (var i = 0; i < options.length; i++) {
-         if (options[i].value === file_category) {
-            options[i].selected = true;
-            break;
+            if (options[i].value === file_category) {
+               options[i].selected = true;
+               break;
+            }
          }
+
+         var selectElement = document.getElementById("editFileProvince");
+         var options = selectElement.options;
+
+         for (var i = 0; i < options.length; i++) {
+            if (options[i].value === file_province) {
+               options[i].selected = true;
+               break;
+            }
+         }
+
+         var selectElement = document.getElementById("editFileCityMunicipality");
+         var options = selectElement.options;
+
+         for (var i = 0; i < options.length; i++) {
+            if (options[i].value === file_cityMunicipality) {
+               options[i].selected = true;
+               break;
+            }
          }
       }
 
-      // AJAX code for updating province options based on selected region
-      function getProvinces(region) {
-         var xhr = new XMLHttpRequest();
-         xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-               document.getElementById("fileProvince").innerHTML = "<option selected disabled>Select a province</option>" + this.responseText;
-               // Reset city/municipality options
-               document.getElementById("fileCityMunicipality").innerHTML = "<option selected disabled>Select a city/municipality</option>";
-            }
-         };
-         xhr.open("POST", "../php/getProvincesCities.php", true);
-         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-         xhr.send("region=" + region);
-      }
+      $(document).ready(function(){
+         const editButton = document.getElementById('editButton');
 
-      // AJAX code for updating city/municipality options based on selected province
-      function getCities(province) {
-         var xhr = new XMLHttpRequest();
-         xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-               document.getElementById("fileCityMunicipality").innerHTML = this.responseText;
-            }
-         };
-         xhr.open("POST", "../php/getProvincesCities.php", true);
-         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-         xhr.send("province=" + province);
-      }
+         $('#fileProvince').change(function(){
+            var province = $(this).val();
+            $.ajax({
+               url:"../php/fetchMunicipalities.php",
+               method:"POST",
+               data:{province:province},
+               dataType:"html", // set the expected data type to HTML
+               success:function(data){
+                  $('#fileCityMunicipality').html(data);
+               }
+            });
+         });
+
+         editButton.addEventListener('click', function() {
+            const disabledElements = document.querySelectorAll('[disabled]');
+
+            disabledElements.forEach((element) => {
+               element.removeAttribute('disabled');
+            });
+
+            document.getElementById('editButton').style.display = 'none';
+            document.getElementById('saveButton').style.display = 'inline-block';
+         });
+
+      });
+
 
    </script>
 </body>

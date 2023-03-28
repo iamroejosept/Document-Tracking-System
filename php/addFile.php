@@ -8,56 +8,73 @@ date_default_timezone_set('Asia/Manila');
 
 // Connect to the database
 $conn = mysqli_connect($Server, $User, $DBPassword, $Database);
-    
+
 // Check if the connection was successful
 if(!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
-    
+
 $message = "";
 $status = "";
 $office="";
-$fileName = $_FILES['inputFile']['name'];
-$fileTmpName = $_FILES['inputFile']['tmp_name']; // Temporary file path
+$fileName = "";
+$fileTmpName = "";
 $fileCategory = mysqli_real_escape_string($conn, $_POST['fileCategory']);
 $barcode = mysqli_real_escape_string($conn, $_POST['txtBarcode']);
 $fileDescription = mysqli_real_escape_string($conn, $_POST['fileDescription']);
-$fileRegion = mysqli_real_escape_string($conn, $_POST['fileRegion']);
 $fileProvince = mysqli_real_escape_string($conn, $_POST['fileProvince']);
 $fileCityMunicipality = mysqli_real_escape_string($conn, $_POST['fileCityMunicipality']);
 
-$query ="SELECT office_id_num FROM OfficeSettings WHERE Region='$fileRegion' AND Province='$fileProvince' AND cityMunicipality='$fileCityMunicipality'";  
+$query ="SELECT office_id_num FROM OfficeSettings WHERE Province='$fileProvince' AND cityMunicipality='$fileCityMunicipality'";
 $result = mysqli_query($conn, $query);
 
 if($result){
     $row = mysqli_fetch_assoc($result);
     $office = $row['office_id_num'];
- }
+}
 
 $currentDateTime = new DateTime();
 $formattedDateTime = $currentDateTime->format('Y-m-d');
 
-$uploadDir = '../files/'; // Upload directory
-$uploadPath = $uploadDir . basename($fileName);
-    
-if (move_uploaded_file($fileTmpName, $uploadPath)) {
-    // File uploaded successfully, proceed with database insert
-    $sql = "INSERT INTO Files (Barcode, Category, Description, File, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileName', '', '$formattedDateTime', '$office')";
+// Check if a file has been uploaded
+if(isset($_FILES['inputFile']) && $_FILES['inputFile']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $fileName = $_FILES['inputFile']['name'];
+    $fileTmpName = $_FILES['inputFile']['tmp_name']; // Temporary file path
+
+    $uploadDir = '../files/'; // Upload directory
+    $uploadPath = $uploadDir . basename($fileName);
+
+    if (move_uploaded_file($fileTmpName, $uploadPath)) {
+        // File uploaded successfully, proceed with database insert
+        $sql = "INSERT INTO Files (Barcode, Category, Description, File, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileName', '', '$formattedDateTime', '$office')";
+        $result = mysqli_query($conn, $sql);
+
+        if ($result) {
+            $message = "File uploaded and record inserted successfully";
+            $status = "success";
+        } else {
+            $message = "Error inserting record into database";
+            $status = "error";
+        }
+    } else {
+        $message = "Error uploading file";
+        $status = "error";
+    }
+} else {
+    // No file uploaded, proceed with database insert without file
+    $sql = "INSERT INTO Files (Barcode, Category, Description, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '', '$formattedDateTime', '$office')";
     $result = mysqli_query($conn, $sql);
-    
+
     if ($result) {
-        $message = "File uploaded and record inserted successfully";
+        $message = "Record inserted successfully";
         $status = "success";
     } else {
         $message = "Error inserting record into database";
         $status = "error";
     }
-} else {
-    $message = "Error uploading file";
-    $status = "error";
 }
 
-$XMLData = '';  
+$XMLData = '';
 $XMLData .= ' <output ';
 $XMLData .= ' message = ' . '"'.$message.'"';
 $XMLData .= ' status = ' . '"'.$status.'"';

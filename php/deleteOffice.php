@@ -23,7 +23,7 @@ if(isset($_POST['id'])) {
     $officeId = mysqli_real_escape_string($conn, $_POST['id']);
     
     // Build the SQL query to delete the category record
-    $sql = "DELETE FROM OfficeSettings WHERE id_num = '$officeId'";
+    $sql = "DELETE FROM OfficeSettings WHERE office_id_num = '$officeId'";
     
     // Execute the query
     if(mysqli_query($conn, $sql)) {

@@ -445,14 +445,8 @@
                               <div class="row">
                                  <div class="col-md-12">
                                     <div class="form-group">
-                                       <label>Region</label>
-                                       <input type="text" class="form-control" name="addRegion" placeholder="ex. CAR">
-                                    </div>
-                                 </div>
-                                 <div class="col-md-12">
-                                    <div class="form-group">
                                        <label>Province</label>
-                                       <input type="text" class="form-control" name="addProvince" placeholder="ex. Benguet">
+                                       <input type="text" class="form-control" name="addProvince" value="Benguet" >
                                     </div>
                                  </div>
                                  <div class="col-md-12">
@@ -472,7 +466,6 @@
                   <table id="example1" class="table table-bordered table-hover">
                      <thead>
                         <tr>
-                           <th>Region</th>
                            <th>Province</th>
                            <th>City/Municipality</th>
                            <th class="text-center">Action</th>
@@ -482,18 +475,16 @@
                            <?php        
                               if($result != ''){
                                  while($row = mysqli_fetch_array($result)){  
-                                    $officeRegion = $row['Region'];
                                     $officeProvince = $row['Province'];
                                     $officeIDNum = $row['office_id_num'];
                                     $officeCityMunicipality = $row['cityMunicipality'];
 
                                     echo "  
                                     <tr>
-                                          <td>$officeRegion</td>
                                           <td>$officeProvince</td>
                                           <td>$officeCityMunicipality</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-office-id='$officeIDNum' data-office-region='$officeRegion' data-office-province='$officeProvince' data-office-cityMunicipality='$officeCityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>Update</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-office-id='$officeIDNum' data-office-province='$officeProvince' data-office-cityMunicipality='$officeCityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>Update</a>
                                              <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-office-id='$officeIDNum'>
                                                 <i class='fa fa-trash-alt'></i>Delete
                                              </a>
@@ -544,12 +535,6 @@
                            <div class="row">
                               <div class="col-md-12">
                                  <div class="form-group">
-                                    <label class="float-left">Region</label>
-                                    <input id="editTxtRegion" type="text" name="editRegion" class="form-control">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
                                     <label class="float-left">Province</label>
                                     <input id="editTxtProvince" type="text" name="editProvince" class="form-control">
                                  </div>
@@ -590,11 +575,9 @@
 
       function populateEditModal(button) {
          var office_id = button.getAttribute('data-office-id');
-         var office_region = button.getAttribute('data-office-region');
          var office_province = button.getAttribute('data-office-province');
          var office_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
          
-         document.getElementById('editTxtRegion').value = office_region;
          document.getElementById('editTxtProvince').value = office_province;
          document.getElementById('editTxtCityMunicipality').value = office_cityMunicipality;
          document.getElementById('hiddenId').value = office_id;
