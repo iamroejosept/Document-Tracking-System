@@ -19,6 +19,7 @@ CREATE TABLE Files (
   Barcode varchar(255) NULL,
   Category varchar(255) NULL,
   Description varchar(255) NULL,
+  FileLocation varchar(255) NULL,
   File varchar(255) NULL,
   UploadedBy varchar(255) NULL,
   Date varchar(255) NULL,

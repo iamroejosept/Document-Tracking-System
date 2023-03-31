@@ -22,6 +22,8 @@ $fileTmpName = "";
 $fileCategory = mysqli_real_escape_string($conn, $_POST['fileCategory']);
 $barcode = mysqli_real_escape_string($conn, $_POST['txtBarcode']);
 $fileDescription = mysqli_real_escape_string($conn, $_POST['fileDescription']);
+$fileLocation = mysqli_real_escape_string($conn, $_POST['fileFileLocation']);
+$fileDateUploaded = mysqli_real_escape_string($conn, $_POST['fileDate']);
 $fileProvince = mysqli_real_escape_string($conn, $_POST['fileProvince']);
 $fileCityMunicipality = mysqli_real_escape_string($conn, $_POST['fileCityMunicipality']);
 
@@ -33,9 +35,6 @@ if($result){
     $office = $row['office_id_num'];
 }
 
-$currentDateTime = new DateTime();
-$formattedDateTime = $currentDateTime->format('Y-m-d');
-
 // Check if a file has been uploaded
 if(isset($_FILES['inputFile']) && $_FILES['inputFile']['error'] !== UPLOAD_ERR_NO_FILE) {
     $fileName = $_FILES['inputFile']['name'];
@@ -46,7 +45,7 @@ if(isset($_FILES['inputFile']) && $_FILES['inputFile']['error'] !== UPLOAD_ERR_N
 
     if (move_uploaded_file($fileTmpName, $uploadPath)) {
         // File uploaded successfully, proceed with database insert
-        $sql = "INSERT INTO Files (Barcode, Category, Description, File, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileName', '', '$formattedDateTime', '$office')";
+        $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, File, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$fileName', '', '$fileDateUploaded', '$office')";
         $result = mysqli_query($conn, $sql);
 
         if ($result) {
@@ -62,7 +61,7 @@ if(isset($_FILES['inputFile']) && $_FILES['inputFile']['error'] !== UPLOAD_ERR_N
     }
 } else {
     // No file uploaded, proceed with database insert without file
-    $sql = "INSERT INTO Files (Barcode, Category, Description, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '', '$formattedDateTime', '$office')";
+    $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '', '$fileDateUploaded', '$office')";
     $result = mysqli_query($conn, $sql);
 
     if ($result) {

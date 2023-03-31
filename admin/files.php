@@ -24,6 +24,8 @@
    <script src="../asset/jquery-3.6.0.min.js"></script>
    <link rel="stylesheet" href="../asset/jquery-confirm.min.css">
    <script src="../asset/jquery-confirm.min.js"></script>
+
+</head>
    <script>
       $(document).ready(function() {
          //Function for updating file record
@@ -260,6 +262,18 @@
       .iconsTop{
          color: white !important;
       }
+
+      #File2{
+         display: inline-block;
+         width: 100%;
+         height: 100%;
+      }
+
+      #File1{
+         display: none;
+         width: 100%;
+      }
+
    </style>
 </head>
 
@@ -446,8 +460,9 @@
                               <th>Barcode</th>
                               <th>Category</th>
                               <th>Description</th>
+                              <th>File Location</th>
                               <th>Uploaded by</th>
-                              <th>Date</th>
+                              <th>Date Uploaded</th>
                               <th>Office</th>
 
                               <th class="text-center">Action</th>
@@ -463,6 +478,7 @@
                                     $FileId = $row['id_num'];
                                     $Category = $row['Category'];
                                     $Description = $row['Description'];
+                                    $FileLocation = $row['FileLocation'];
                                     $File = $row['File'];
                                     $UploadedBy = $row['UploadedBy'];
                                     $Date = $row['Date'];
@@ -503,11 +519,13 @@
                                           <td>$Barcode</td>
                                           <td>$Category</td>
                                           <td>$Description</td>
+                                          <td>$FileLocation</td>
                                           <td>$UploadedBy</td>
                                           <td>$Date</td>
                                           <td>$office</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-description='$Description' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>View</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-description='$Description' data-file-fileLocation='$FileLocation' 
+                                             data-file-dateUploaded='$Date' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>View</a>
                                              <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-file-id='$FileId'>
                                                 <i class='fa fa-trash-alt'></i>Delete
                                              </a>
@@ -536,8 +554,8 @@
                               <h5>File Information</h5>
                            </div>
                            <div class="row">
-                              <div class="col-md-6">
-                                 <div class="form-group">
+                              <div class="col-md-12">
+                                 <div class="form-group" id="File1">
                                     <label class="float-left" id="editFileLabel">Files</label>
                                     <div class="input-group">
                                        <div class="custom-file">
@@ -545,6 +563,10 @@
                                           <label class="custom-file-label" id="labelEditInputFile" for="editInputFile">File</label>
                                        </div>
                                     </div>
+                                 </div>
+                                 <div class="form-group my-3" id="File2">
+                                    <iframe id="viewFileFrame" width="100%" height="500"></iframe>
+                                    <a href="#" id="viewFileName"></a>
                                  </div>
                               </div>
                               <div class="col-md-6">
@@ -568,7 +590,7 @@
                                     </select>
                                  </div>
                               </div>
-                              <div class="col-md-12">
+                              <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Barcode</label>
                                     <input type="text" class="form-control" name="nameEditBarcode" id="editBarcode" placeholder="Barcode" disabled>
@@ -578,6 +600,18 @@
                                  <div class="form-group">
                                     <label class="float-left">Description</label>
                                     <textarea class="form-control" id="editDescription" name="nameEditDescription" placeholder="Description" disabled></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">File Location</label>
+                                    <textarea class="form-control" id="editFileLocation" name="nameEditFileLocation" placeholder="File Location" disabled></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Date Uploaded</label>
+                                    <input type="date" id="editDateUploaded" class="form-control" name="nameEditDateUploaded" placeholder="Date Uploaded" disabled>
                                  </div>
                               </div>
                               <div class="col-md-6">
@@ -708,6 +742,18 @@
                                     <textarea class="form-control" name="fileDescription" placeholder="Description"></textarea>
                                  </div>
                               </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">File Location</label>
+                                    <textarea class="form-control" name="fileFileLocation" placeholder="File Location"></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Date</label>
+                                    <input type="date" id="fetchDate" class="form-control" name="fileDate" placeholder="Date">
+                                 </div>
+                              </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Province</label>
@@ -788,22 +834,27 @@
          var file_category = button.getAttribute('data-file-category');
          var file_barcode = button.getAttribute('data-file-barcode');
          var file_description = button.getAttribute('data-file-description');
+         var file_fileLocation = button.getAttribute('data-file-fileLocation');
+         var file_dateUploaded = button.getAttribute('data-file-dateUploaded');
          var file_province = button.getAttribute('data-office-province');
          var file_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
-         
+
          document.getElementById('hiddenId').value = file_id;
          document.getElementById('labelEditInputFile').innerHTML = file;
          document.getElementById('editBarcode').value = file_barcode;
          document.getElementById('editDescription').value = file_description;
+         document.getElementById('editFileLocation').value = file_fileLocation;
+         document.getElementById('editDateUploaded').value = file_dateUploaded;
 
-         var selectElement = document.getElementById("editCategoryName");
-         var options = selectElement.options;
-
-         for (var i = 0; i < options.length; i++) {
-            if (options[i].value === file_category) {
-               options[i].selected = true;
-               break;
-            }
+         if (file.endsWith('.pdf')) {
+            document.getElementById('viewFileFrame').style.display = 'inline-block';
+            document.getElementById('viewFileFrame').setAttribute('src', '../files/' + file);
+            document.getElementById('viewFileName').style.display = 'none';
+         } else {
+            document.getElementById('viewFileFrame').style.display = 'none';
+            document.getElementById('viewFileName').style.display = 'inline-block';
+            document.getElementById('viewFileName').innerHTML = file;
+            document.getElementById('viewFileName').setAttribute('href', '../files/' + file);
          }
 
          var selectElement = document.getElementById("editFileProvince");
@@ -825,6 +876,8 @@
                break;
             }
          }
+
+         
       }
 
       $(document).ready(function(){
@@ -852,7 +905,45 @@
 
             document.getElementById('editButton').style.display = 'none';
             document.getElementById('saveButton').style.display = 'inline-block';
+            document.getElementById('File1').style.display = "inline-block";
+            document.getElementById('File2').style.display = "none";
+
          });
+
+         $('#edit').on('hidden.bs.modal', function (e) {
+            document.getElementById('File1').style.display = "none";
+            document.getElementById('File2').style.display = "inline-block";
+            document.getElementById('editButton').style.display = 'inline-block';
+            document.getElementById('saveButton').style.display = 'none';
+
+            document.getElementById('editCategoryName').disabled = true;
+            document.getElementById('editBarcode').disabled = true;
+            document.getElementById('editDescription').disabled = true;
+            document.getElementById('editFileProvince').disabled = true;
+            document.getElementById('editFileCityMunicipality').disabled = true;
+            document.getElementById('editDateUploaded').disabled = true;
+            document.getElementById('editFileLocation').disabled = true;
+
+
+
+         });
+
+         $('#add').on('shown.bs.modal', function() {
+            // create a new date object
+            var today = new Date();
+            
+            // get the year, month, and day from the date object
+            var year = today.getFullYear();
+            var month = (today.getMonth() + 1).toString().padStart(2, "0");
+            var day = today.getDate().toString().padStart(2, "0");
+            
+            // create a new date string in the format 'y-m-d'
+            var newDateString = year + "-" + month + "-" + day;
+            
+            // set the value of the input field to the new date string
+            $('#fetchDate').val(newDateString);
+        });
+
 
       });
 
