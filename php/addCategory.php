@@ -19,9 +19,10 @@ $status = "";
     
     $DCN = mysqli_real_escape_string($conn, $_POST['addDCN']);
     $Description = mysqli_real_escape_string($conn, $_POST['addDescription']);
+    $Frequency = mysqli_real_escape_string($conn, $_POST['addFrequency']);
     
     // Build the SQL query to add the category record
-    $sql = "INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES ('$DCN', '$Description')";
+    $sql = "INSERT INTO DocumentCategory (DocumentCategoryName, Description, Frequency) VALUES ('$DCN', '$Description', '$Frequency')";
     
     // Execute the query
     if(mysqli_query($conn, $sql)) {

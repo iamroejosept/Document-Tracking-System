@@ -23,9 +23,10 @@ if(isset($_POST['editID'])) {
     $categoryId = mysqli_real_escape_string($conn, $_POST['editID']);
     $categoryName = mysqli_real_escape_string($conn, $_POST['editDCN']);
     $description = mysqli_real_escape_string($conn, $_POST['editDescription']);
+    $frequency = mysqli_real_escape_string($conn, $_POST['editFrequency']);
     
     // Build the SQL query to update the category record
-    $sql = "UPDATE DocumentCategory SET DocumentCategoryName = '$categoryName', Description = '$description' WHERE id_num = '$categoryId'";
+    $sql = "UPDATE DocumentCategory SET DocumentCategoryName = '$categoryName', Description = '$description', Frequency = '$frequency' WHERE id_num = '$categoryId'";
     
     // Execute the query
     if(mysqli_query($conn, $sql)) {

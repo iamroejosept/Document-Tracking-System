@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // Require the Database and centralConnection classes
 require_once 'Database.php';
 require 'centralConnection.php';
@@ -9,6 +11,7 @@ date_default_timezone_set('Asia/Manila');
 $message = "";
 $status = "";
 $office = "";
+$user_name = $_SESSION['user_id'];
 
 // Check if the category id parameter is set in the URL
 if(isset($_POST['nameEditID'])) {
@@ -29,6 +32,7 @@ if(isset($_POST['nameEditID'])) {
     $editDateUploaded = mysqli_real_escape_string($conn, $_POST['nameEditDateUploaded']);
     $editProvince = mysqli_real_escape_string($conn, $_POST['namefileProvince']);
     $editCityMunicipality = mysqli_real_escape_string($conn, $_POST['namefileCityMunicipality']);
+    $editRemark = mysqli_real_escape_string($conn, $_POST['nameEditRemark']);
 
     $editDateUploaded = date('Y-m-d', strtotime($editDateUploaded));
 
@@ -42,7 +46,7 @@ if(isset($_POST['nameEditID'])) {
 
     if($_FILES['nameEditInputFile']['name'] == null){
         // Build the SQL query to update the category record
-        $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office' WHERE id_num = '$editID'";
+        $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -69,7 +73,7 @@ if(isset($_POST['nameEditID'])) {
 
         if (move_uploaded_file($fileTmpName, $uploadPath)) {
             // Build the SQL query to update the category record
-            $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', File = '$fileName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office' WHERE id_num = '$editID'";
+            $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', File = '$fileName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
             
             // Execute the query
             if(mysqli_query($conn, $sql)) {

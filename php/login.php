@@ -107,9 +107,11 @@
                 $decryption=openssl_decrypt ($simple_string, $ciphering, $decryption_key, $options, $decryption_iv);
 
                 if($decryption == $TxtPassword){
+                    
                     $Message = "Login Successfully.";
                     $Verify = true;
                     $_SESSION['logged_in'] = 1;
+                    $_SESSION['user_id'] = stripslashes($Row['users_id_num']);
                 }
                 else{
                     $Message = "Incorrect username or password. Please try again.";

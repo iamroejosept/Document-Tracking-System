@@ -16,6 +16,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>Document Tracking System</title>
+   <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
@@ -304,6 +305,15 @@
       .iconsTop{
          color: white !important;
       }
+
+      .sidebar-collapse .nav-link i.right {
+            display: none;
+         }
+
+         .main-sidebar:hover .nav-link i.right{
+            display: inline-block;
+            
+         }
    </style>
 </head>
 
@@ -326,7 +336,7 @@
                </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link iconsTop" href="../index.html">
+               <a class="nav-link iconsTop" href="../php/logout.php">
                   <i class="fas fa-sign-out-alt"></i>
                </a>
             </li>
@@ -370,8 +380,23 @@
                         <p>
                            Files
                         </p>
+                        <i class="right fas fa-angle-left"></i>
                      </a>
-                  </li>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="files.php?AOS=add" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Add Files</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="files.php?AOS=search" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Search Files</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li> 
                  <!--  <li class="nav-item">
                      <a href="#" class="nav-link">
                         <img src="../asset/img/commit.png" width="30">
@@ -467,7 +492,7 @@
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Users</li>
                      </ol>
                   </div><br>
@@ -497,7 +522,7 @@
                                  if($result != ''){
                                     while($row = mysqli_fetch_array($result)){  
                                        $Fullname = $row['Fullname'];
-                                       $UserID = $row['id_num'];
+                                       $UserID = $row['users_id_num'];
                                        $Username = $row['Username'];
                                        $Password = $row['Password'];
                                        $AccessLevel = $row['AccessLevel'];
@@ -518,9 +543,9 @@
                                                 </td>
                                                 <td><span class='badge bg-success'>$Status</td>
                                                 <td class='text-center'>
-                                                   <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-user-id='$UserID' data-fullname='$Fullname' data-username='$Username' data-password='$Password' data-access-level='$AccessLevel' data-status='$Status' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>Update</a>
+                                                   <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-user-id='$UserID' data-fullname='$Fullname' data-username='$Username' data-password='$Password' data-access-level='$AccessLevel' data-status='$Status' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                                    <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-user-id='$UserID'>
-                                                      <i class='fa fa-trash-alt'></i>Delete
+                                                      <i class='fa fa-trash-alt'></i> Delete
                                                    </a>
                                                 </td>
                                           </tr>";
@@ -539,9 +564,9 @@
                                                 </td>
                                                 <td><span class='badge bg-danger'>$Status</td>
                                                 <td class='text-center'>
-                                                   <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-user-id='$UserID' data-fullname='$Fullname' data-username='$Username' data-password='$Password' data-access-level='$AccessLevel' data-status='$Status' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>Update</a>
+                                                   <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-user-id='$UserID' data-fullname='$Fullname' data-username='$Username' data-password='$Password' data-access-level='$AccessLevel' data-status='$Status' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                                    <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-user-id='$UserID'>
-                                                      <i class='fa fa-trash-alt'></i>Delete
+                                                      <i class='fa fa-trash-alt'></i> Delete
                                                    </a>
                                                 </td>
                                           </tr>";

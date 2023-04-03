@@ -16,6 +16,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>Document Tracking System</title>
+   <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
@@ -262,6 +263,15 @@
       .iconsTop{
          color: white !important;
       }
+
+      .sidebar-collapse .nav-link i.right {
+            display: none;
+         }
+
+         .main-sidebar:hover .nav-link i.right{
+            display: inline-block;
+            
+         }
    </style>
 </head>
 
@@ -284,7 +294,7 @@
                </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link iconsTop" href="../index.html">
+               <a class="nav-link iconsTop" href="../php/logout.php">
                   <i class="fas fa-sign-out-alt"></i>
                </a>
             </li>
@@ -321,15 +331,30 @@
                   </a>
                </li>
                <li class="nav-item">
-                  <a href="files.php" class="nav-link">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z"/>
-                      </svg>
-                     <p>
-                        Files
-                     </p>
-                  </a>
-               </li>
+                     <a href="files.php" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+                           <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z"/>
+                         </svg>
+                        <p>
+                           Files
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                     </a>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="files.php?AOS=add" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Add Files</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="files.php?AOS=search" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Search Files</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li>  
               <!--  <li class="nav-item">
                   <a href="#" class="nav-link">
                      <img src="../asset/img/commit.png" width="30">
@@ -425,7 +450,7 @@
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item" style="color: rgb(22,94,155);"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item" style="color: rgb(22,94,155);"><a href="index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Office Category</li>
                      </ol>
                   </div>
@@ -457,7 +482,8 @@
                                  </div>
                               </div>
                               <div class="col-md-12">
-                                 <button type="submit" class="btn btn-primary">Add</button>
+                                 <button type="submit" class="btn btn-primary"><i
+                        class="fa fa-plus-square"></i> Add</button>
                               </div>
                   </form>
                </div>
@@ -484,9 +510,9 @@
                                           <td>$officeProvince</td>
                                           <td>$officeCityMunicipality</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-office-id='$officeIDNum' data-office-province='$officeProvince' data-office-cityMunicipality='$officeCityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>Update</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-office-id='$officeIDNum' data-office-province='$officeProvince' data-office-cityMunicipality='$officeCityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                              <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-office-id='$officeIDNum'>
-                                                <i class='fa fa-trash-alt'></i>Delete
+                                                <i class='fa fa-trash-alt'></i> Delete
                                              </a>
                                           </td>
                                     </tr>";

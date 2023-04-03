@@ -14,12 +14,23 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>Document Tracking System</title>
+   <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
    <link rel="stylesheet" href="../asset/css/style.css">
    <link rel="stylesheet" href="../asset/tables/datatables-bs4/css/dataTables.bootstrap4.min.css">
    <link rel="stylesheet" href="../css/style.css">
+   <style>
+         .sidebar-collapse .nav-link i.right {
+            display: none;
+         }
+
+         .main-sidebar:hover .nav-link i.right{
+            display: inline-block;
+            
+         }
+   </style>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -41,7 +52,7 @@
                </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link iconsTop" href="../index.html">
+               <a class="nav-link iconsTop" href="../php/logout.php">
                   <i class="fas fa-sign-out-alt"></i>
                </a>
             </li>
@@ -85,8 +96,23 @@
                         <p>
                            Files
                         </p>
+                        <i class="right fas fa-angle-left"></i>
                      </a>
-                  </li>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="files.php?AOS=add" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Add Files</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="files.php?AOS=search" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Search Files</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li> 
                  <!--  <li class="nav-item">
                      <a href="#" class="nav-link">
                         <img src="../asset/img/commit.png" width="30">
@@ -182,7 +208,6 @@
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
                         <li class="breadcrumb-item active">Dashboard</li>
                      </ol>
                   </div>

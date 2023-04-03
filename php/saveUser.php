@@ -32,7 +32,7 @@ if(isset($_POST['nameEditID'])) {
     $row = mysqli_fetch_array($result);
     if($row['Password'] == $editPassword){
         // Build the SQL query to update the category record
-        $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$editPassword', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE id_num = '$editID'";
+        $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$editPassword', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -64,7 +64,7 @@ if(isset($_POST['nameEditID'])) {
         $encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
 
         // Build the SQL query to update the category record
-        $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$encryption', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE id_num = '$editID'";
+        $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$encryption', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {

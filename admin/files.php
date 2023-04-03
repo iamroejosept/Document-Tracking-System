@@ -16,6 +16,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>Document Tracking System</title>
+   <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
@@ -274,6 +275,15 @@
          width: 100%;
       }
 
+      .sidebar-collapse .nav-link i.right {
+            display: none;
+         }
+
+         .main-sidebar:hover .nav-link i.right{
+            display: inline-block;
+            
+         }
+
    </style>
 </head>
 
@@ -296,7 +306,7 @@
                </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link iconsTop" href="../index.html">
+               <a class="nav-link iconsTop" href="../php/logout.php">
                   <i class="fas fa-sign-out-alt"></i>
                </a>
             </li>
@@ -340,8 +350,23 @@
                         <p>
                            Files
                         </p>
+                        <i class="right fas fa-angle-left"></i>
                      </a>
-                  </li>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="files.php?AOS=add" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Add Files</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="files.php?AOS=search" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Search Files</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li> 
                  <!--  <li class="nav-item">
                      <a href="#" class="nav-link">
                         <img src="../asset/img/commit.png" width="30">
@@ -437,14 +462,67 @@
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
                         <li class="breadcrumb-item active">Files</li>
                      </ol>
                   </div><br>
-                  <a class="btn btn-sm btn-info elevation-4" href="#" data-toggle="modal" data-target="#add" style="margin-left: 7px; background-color: rgb(22,94,155);"><i
+                  <a class="btn btn-sm btn-info elevation-4" id="addNewButton" href="#" data-toggle="modal" data-target="#add" style="margin-left: 7px; background-color: rgb(22,94,155); display: none;"><i
                         class="fa fa-plus-square"></i>
                      Add New</a>
                </div>
+               <div class="row mb-2" id="searchFields" style="display: none;">
+                  <div class="col-sm-2">
+                     <label class="float-left">Province</label>
+                     <input list="dlProvinces" id="inputDlProvince" class="form-control" name="provinces">
+                     <datalist id="dlProvinces">
+                        <?php 
+                           $searchQuery = "SELECT DISTINCT Province FROM OfficeSettings";  
+                           $searchResult = mysqli_query($connect, $searchQuery);
+
+                           if($searchResult != ''){
+                                 while($rowSearch = mysqli_fetch_array($searchResult)){  
+                                 $searchProvince = $rowSearch['Province'];
+                                                
+                                 echo "<option value='$searchProvince'>$searchProvince</option>";
+                              }  
+                           }  
+                        ?>
+                     </datalist>
+                  </div>
+                  <div class="col-sm-2">
+                     <label class="float-left">Municipality</label>
+                     <input list="municipalities" class="form-control" name="municipalities">
+                     <datalist id="municipalities">
+                        
+                     </datalist>
+                  </div>
+                  <div class="col-sm-2">
+                     <label class="float-left">Category</label>
+                     <input list="dlCategories" id="inputDlCategories" class="form-control" name="categories">
+                     <datalist id="dlCategories">
+                        <?php 
+                           $searchQuery = "SELECT DISTINCT DocumentCategoryName FROM DocumentCategory";  
+                           $searchResult = mysqli_query($connect, $searchQuery);
+
+                           if($searchResult != ''){
+                                 while($rowSearch = mysqli_fetch_array($searchResult)){  
+                                 $searchDocumentCategoryName = $rowSearch['DocumentCategoryName'];
+                                                
+                                 echo "<option value='$searchDocumentCategoryName'>$searchDocumentCategoryName</option>";
+                              }  
+                           }  
+                        ?>
+                     </datalist>
+                  </div>
+                  <div class="col-sm-2">
+                     <label class="float-left">Date From</label>
+                     <input type="date" class="form-control" placeholder="Date From">
+                  </div>
+                  <div class="col-sm-2">
+                     <label class="float-left">Date To</label>
+                     <input type="date" class="form-control" placeholder="Date To">
+                  </div>
+            </div>
             </div>
          </div>
          <section class="content">
@@ -452,18 +530,17 @@
                <div class="card card-info">
                   <br>
                   <div class="col-md-12">
-                     <table id="example1" class="table table-hover">
+                     <table id="fileDatatable" class="table table-hover">
                         <thead>
                            <tr>
                               <th>File Type</th>
                               <th>File Name</th>
                               <th>Barcode</th>
                               <th>Category</th>
-                              <th>Description</th>
-                              <th>File Location</th>
+                              <th>Office</th>
                               <th>Uploaded by</th>
                               <th>Date Uploaded</th>
-                              <th>Office</th>
+                              <th>Remark</th>
 
                               <th class="text-center">Action</th>
                            </tr>
@@ -483,10 +560,12 @@
                                     $UploadedBy = $row['UploadedBy'];
                                     $Date = $row['Date'];
                                     $office_ID = $row['office_id_num'];
+                                    $Remark = $row['Remark'];
                                     $office="";
                                     $office_province="";
                                     $office_cityMunicipality="";
                                     $icon = '';
+                                    $frequency = '';
 
                                     $sql ="SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
                                     $result1 = mysqli_query($connect, $sql);
@@ -496,6 +575,22 @@
                                        $office_province=$row1['Province'];
                                        $office_cityMunicipality=$row1['cityMunicipality'];
                                        $office = "{$office_province}, {$office_cityMunicipality}";
+                                    }
+
+                                    $sql ="SELECT * FROM DocumentCategory WHERE DocumentCategoryName='$Category'";  
+                                    $result2 = mysqli_query($connect, $sql);
+
+                                    if($result2){
+                                       $row2 = mysqli_fetch_assoc($result2);
+                                       $frequency=$row2['Frequency'];
+                                    }
+
+                                    $sql ="SELECT * FROM Users WHERE users_id_num='$UploadedBy'";  
+                                    $result3 = mysqli_query($connect, $sql);
+
+                                    if($result3){
+                                       $row3 = mysqli_fetch_assoc($result3);
+                                       $UploadedBy=$row3['Fullname'];
                                     }
 
                                     if($FileType == 'docx' || $FileType == 'doc'){
@@ -518,16 +613,17 @@
                                           <td>$FileName</td>
                                           <td>$Barcode</td>
                                           <td>$Category</td>
-                                          <td>$Description</td>
-                                          <td>$FileLocation</td>
+                                          <td>$office</td>
                                           <td>$UploadedBy</td>
                                           <td>$Date</td>
-                                          <td>$office</td>
+                                          <td>$Remark</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-description='$Description' data-file-fileLocation='$FileLocation' 
-                                             data-file-dateUploaded='$Date' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-edit'></i>View</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-frequency='$frequency' data-file-description='$Description' data-file-fileLocation='$FileLocation' 
+                                             data-file-dateUploaded='$Date' 
+                                             data-file-uploadedBy='$UploadedBy' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality'
+                                             data-file-remark='$Remark' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                              <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-file-id='$FileId'>
-                                                <i class='fa fa-trash-alt'></i>Delete
+                                                <i class='fa fa-trash-alt'></i> Delete
                                              </a>
                                           </td>
                                     </tr>";
@@ -569,6 +665,12 @@
                                     <a href="#" id="viewFileName"></a>
                                  </div>
                               </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Barcode</label>
+                                    <input type="text" class="form-control" name="nameEditBarcode" id="editBarcode" placeholder="Barcode" disabled>
+                                 </div>
+                              </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Category Name</label>
@@ -592,26 +694,8 @@
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">Barcode</label>
-                                    <input type="text" class="form-control" name="nameEditBarcode" id="editBarcode" placeholder="Barcode" disabled>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" id="editDescription" name="nameEditDescription" placeholder="Description" disabled></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">File Location</label>
-                                    <textarea class="form-control" id="editFileLocation" name="nameEditFileLocation" placeholder="File Location" disabled></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Date Uploaded</label>
-                                    <input type="date" id="editDateUploaded" class="form-control" name="nameEditDateUploaded" placeholder="Date Uploaded" disabled>
+                                    <label class="float-left">Frequency</label>
+                                    <span type="text" id="frequency" class="form-control border-0 bg-transparent d-flex"></span>
                                  </div>
                               </div>
                               <div class="col-md-6">
@@ -639,20 +723,40 @@
                                  <div class="form-group">
                                     <label class="float-left">City/Municipality</label>
                                     <select class="form-control" name="namefileCityMunicipality" id="editFileCityMunicipality" disabled>
-                                       <?php 
-                                          $query = "SELECT DISTINCT cityMunicipality FROM OfficeSettings";  
-                                          $result = mysqli_query($connect, $query);
-
-                                          if($result != ''){
-                                             while($row = mysqli_fetch_array($result)){  
-                                                $cityMunicipality = $row['cityMunicipality'];
-                                                
-                                                echo "  
-                                                <option value='$cityMunicipality'>$cityMunicipality</option>
-                                                ";
-                                             }  
-                                          }  
-                                       ?>
+                                       
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="float-left">Uploaded By</label>
+                                    <span type="text" id="uploadedBy" class="form-control border-0 bg-transparent d-flex"></span>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="float-left">Date Uploaded</label>
+                                    <input type="date" id="editDateUploaded" class="form-control" name="nameEditDateUploaded" placeholder="Date Uploaded" disabled>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Description</label>
+                                    <textarea class="form-control" id="editDescription" name="nameEditDescription" placeholder="Description" disabled></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">File Location</label>
+                                    <textarea class="form-control" id="editFileLocation" name="nameEditFileLocation" placeholder="File Location" disabled></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Remark</label>
+                                    <select class="form-control" name="nameEditRemark" id="editRemark" disabled>
+                                       <option value="Submitted">Submitted</option>
+                                       <option value="Not Submitted">Not Submitted</option>
                                     </select>
                                  </div>
                               </div>
@@ -711,8 +815,15 @@
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
+                                    <label class="float-left">Barcode</label>
+                                    <input type="text" class="form-control" name="txtBarcode" placeholder="Barcode">
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
                                     <label class="float-left">Category Name</label>
-                                    <select class="form-control" name="fileCategory">
+                                    <select class="form-control" name="fileCategory" id="fileCategory">
+                                       <option selected disabled>Choose Category</option>
                                        <?php 
                                           $query = "SELECT * FROM DocumentCategory";  
                                           $result = mysqli_query($connect, $query);
@@ -728,30 +839,6 @@
                                           }  
                                        ?>
                                     </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Barcode</label>
-                                    <input type="text" class="form-control" name="txtBarcode" placeholder="Barcode">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" name="fileDescription" placeholder="Description"></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">File Location</label>
-                                    <textarea class="form-control" name="fileFileLocation" placeholder="File Location"></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Date</label>
-                                    <input type="date" id="fetchDate" class="form-control" name="fileDate" placeholder="Date">
                                  </div>
                               </div>
                               <div class="col-md-6">
@@ -784,7 +871,33 @@
                                     </select>
                                  </div>
                               </div>
-
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Date</label>
+                                    <input type="date" id="fetchDate" class="form-control" name="fileDate" placeholder="Date">
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Description</label>
+                                    <textarea class="form-control" name="fileDescription" placeholder="Description"></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">File Location</label>
+                                    <textarea class="form-control" name="fileFileLocation" placeholder="File Location"></textarea>
+                                 </div>
+                              </div>
+                              <div class="col-md-12">
+                                 <div class="form-group">
+                                    <label class="float-left">Remark</label>
+                                    <select class="form-control" name="fileRemark" id="fileRemark">
+                                       <option value="Submitted" selected>Submitted</option>
+                                       <option value="Not Submitted">Not Submitted</option>
+                                    </select>
+                                 </div>
+                              </div>
                            </div>
                         </div>
                      </div>
@@ -809,7 +922,7 @@
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script>
       $(function () {
-         $("#example1").DataTable();
+         $("#fileDatatable").DataTable();
       });
 
       // Update the label of the custom file input with the name of the selected file
@@ -838,10 +951,16 @@
          var file_dateUploaded = button.getAttribute('data-file-dateUploaded');
          var file_province = button.getAttribute('data-office-province');
          var file_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
+         var file_frequency = button.getAttribute('data-file-frequency');
+         var file_remark = button.getAttribute('data-file-remark');
+         var file_uploadedBy = button.getAttribute('data-file-uploadedBy');
 
          document.getElementById('hiddenId').value = file_id;
          document.getElementById('labelEditInputFile').innerHTML = file;
+         document.getElementById('frequency').innerHTML = file_frequency;
+         document.getElementById('editCategoryName').value = file_category;
          document.getElementById('editBarcode').value = file_barcode;
+         document.getElementById('uploadedBy').innerHTML = file_uploadedBy;
          document.getElementById('editDescription').value = file_description;
          document.getElementById('editFileLocation').value = file_fileLocation;
          document.getElementById('editDateUploaded').value = file_dateUploaded;
@@ -857,6 +976,38 @@
             document.getElementById('viewFileName').setAttribute('href', '../files/' + file);
          }
 
+         $.ajax({
+            url: "../php/fetchMunicipalities.php",
+            method: "POST",
+            data: { province: file_province },
+            dataType: "html",
+            success: function (data) {
+               $('#editFileCityMunicipality').html(data);
+               
+               // Move the code that selects the option here
+               var selectElement = document.getElementById("editFileCityMunicipality");
+               var options = selectElement.options;
+
+               for (var i = 0; i < options.length; i++) {
+                  if (options[i].value === file_cityMunicipality) {
+                     options[i].selected = true;
+                     break;
+                  }
+               }
+            }
+         });
+
+
+         var selectElement = document.getElementById("editRemark");
+         var options = selectElement.options;
+
+         for (var i = 0; i < options.length; i++) {
+            if (options[i].value === file_remark) {
+               options[i].selected = true;
+               break;
+            }
+         }
+
          var selectElement = document.getElementById("editFileProvince");
          var options = selectElement.options;
 
@@ -865,22 +1016,24 @@
                options[i].selected = true;
                break;
             }
-         }
-
-         var selectElement = document.getElementById("editFileCityMunicipality");
-         var options = selectElement.options;
-
-         for (var i = 0; i < options.length; i++) {
-            if (options[i].value === file_cityMunicipality) {
-               options[i].selected = true;
-               break;
-            }
-         }
-
-         
+         }         
       }
 
       $(document).ready(function(){
+         // Get the value of AOS parameter from the URL
+         const urlParams = new URLSearchParams(window.location.search);
+         const aos = urlParams.get("AOS");
+
+         // If the value of AOS is "search", change the display of an HTML element
+         if (aos === "search") {
+            var element = document.getElementById("searchFields");
+            element.style.display = "flex";
+
+         }else{
+            var element = document.getElementById("addNewButton");
+            element.style.display = "inline-block";
+         }
+
          const editButton = document.getElementById('editButton');
 
          $('#fileProvince').change(function(){
@@ -896,11 +1049,83 @@
             });
          });
 
+         $('#inputDlProvince').on('change', function() {
+            var province = $(this).val();
+            $.ajax({
+               url:"../php/fetchMunicipalities.php",
+               method:"POST",
+               data:{province:province},
+               dataType:"html", // set the expected data type to HTML
+               success:function(data){
+                  $('#municipalities').html(data);
+               }
+            });
+         });
+
+         $('#editFileProvince').change(function(){
+            var province = $(this).val();
+            $.ajax({
+               url:"../php/fetchMunicipalities.php",
+               method:"POST",
+               data:{province:province},
+               dataType:"html", // set the expected data type to HTML
+               success:function(data){
+                  $('#editFileCityMunicipality').html(data);
+               }
+            });
+         });
+
+         /* $('#fileCategory').change(function(){
+            var category = $(this).val();
+            
+            $.ajax({
+               url:"../php/fetchFrequency.php",
+               method:"POST",
+               data:{category:category},
+               dataType:"xml", // set the expected data type to HTML
+               success: function(xml) {
+                  $(xml).find('output').each(function()
+                  {
+                     var frequency = $(this).attr('frequency');
+
+                     if (frequency === 'Quarterly') {
+                        // Disable all months except March, June, September, and December
+                        $('#fetchDate').datepicker('destroy');
+                        $('#fetchDate').datepicker({
+                           format: 'yyyy-mm-dd',
+                           autoclose: true,
+                           startDate: '-20y', // Allow past dates up to 1 year ago
+                           beforeShowMonth: function(date){
+                              var month = date.getMonth();
+                              if (month == 2 || month == 5 || month == 8 || month == 11) {
+                                 return true;
+                              } else {
+                                 return false;
+                              }
+                           }
+                        });
+                     } else {
+                        // Re-enable all months
+                        $('#fetchDate').datepicker('destroy');
+                        $('#fetchDate').datepicker({
+                           format: 'yyyy-mm-dd',
+                           autoclose: true,
+                           startDate: '-20y' // Allow past dates up to 1 year ago
+                        });
+                     }
+                  });
+               }
+            });
+
+         }); */
+
          editButton.addEventListener('click', function() {
             const disabledElements = document.querySelectorAll('[disabled]');
 
             disabledElements.forEach((element) => {
-               element.removeAttribute('disabled');
+               if (element.id !== "doNotInclude") {
+                  element.removeAttribute('disabled');
+               }
             });
 
             document.getElementById('editButton').style.display = 'none';
@@ -921,6 +1146,7 @@
             document.getElementById('editDescription').disabled = true;
             document.getElementById('editFileProvince').disabled = true;
             document.getElementById('editFileCityMunicipality').disabled = true;
+            document.getElementById('editRemark').disabled = true;
             document.getElementById('editDateUploaded').disabled = true;
             document.getElementById('editFileLocation').disabled = true;
 
@@ -928,21 +1154,7 @@
 
          });
 
-         $('#add').on('shown.bs.modal', function() {
-            // create a new date object
-            var today = new Date();
-            
-            // get the year, month, and day from the date object
-            var year = today.getFullYear();
-            var month = (today.getMonth() + 1).toString().padStart(2, "0");
-            var day = today.getDate().toString().padStart(2, "0");
-            
-            // create a new date string in the format 'y-m-d'
-            var newDateString = year + "-" + month + "-" + day;
-            
-            // set the value of the input field to the new date string
-            $('#fetchDate').val(newDateString);
-        });
+         
 
 
       });

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // Require the Database and centralConnection classes
 require_once 'Database.php';
 require 'centralConnection.php';
@@ -19,6 +21,7 @@ $status = "";
 $office="";
 $fileName = "";
 $fileTmpName = "";
+$user_name = $_SESSION['user_id'];
 $fileCategory = mysqli_real_escape_string($conn, $_POST['fileCategory']);
 $barcode = mysqli_real_escape_string($conn, $_POST['txtBarcode']);
 $fileDescription = mysqli_real_escape_string($conn, $_POST['fileDescription']);
@@ -26,6 +29,9 @@ $fileLocation = mysqli_real_escape_string($conn, $_POST['fileFileLocation']);
 $fileDateUploaded = mysqli_real_escape_string($conn, $_POST['fileDate']);
 $fileProvince = mysqli_real_escape_string($conn, $_POST['fileProvince']);
 $fileCityMunicipality = mysqli_real_escape_string($conn, $_POST['fileCityMunicipality']);
+$fileRemark = mysqli_real_escape_string($conn, $_POST['fileRemark']);
+
+$fileDateUploaded = date('Y-m-d', strtotime($fileDateUploaded));
 
 $query ="SELECT office_id_num FROM OfficeSettings WHERE Province='$fileProvince' AND cityMunicipality='$fileCityMunicipality'";
 $result = mysqli_query($conn, $query);
@@ -45,7 +51,7 @@ if(isset($_FILES['inputFile']) && $_FILES['inputFile']['error'] !== UPLOAD_ERR_N
 
     if (move_uploaded_file($fileTmpName, $uploadPath)) {
         // File uploaded successfully, proceed with database insert
-        $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, File, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$fileName', '', '$fileDateUploaded', '$office')";
+        $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, File, UploadedBy, Date, office_id_num, Remark) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$fileName', '$user_name', '$fileDateUploaded', '$office', '$fileRemark')";
         $result = mysqli_query($conn, $sql);
 
         if ($result) {
@@ -61,7 +67,7 @@ if(isset($_FILES['inputFile']) && $_FILES['inputFile']['error'] !== UPLOAD_ERR_N
     }
 } else {
     // No file uploaded, proceed with database insert without file
-    $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, UploadedBy, Date, office_id_num) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '', '$fileDateUploaded', '$office')";
+    $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, UploadedBy, Date, office_id_num, Remark) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$user_name', '$fileDateUploaded', '$office', '$fileRemark')";
     $result = mysqli_query($conn, $sql);
 
     if ($result) {

@@ -8,6 +8,7 @@ CREATE TABLE DocumentCategory (
   id_num int(50) unsigned ZEROFILL auto_increment,
   DocumentCategoryName varchar(255) NULL,
   Description varchar(255) NULL,
+  Frequency enum("Monthly", "Quarterly", "Daily"),
   
   PRIMARY KEY  (id_num)
 );
@@ -16,6 +17,7 @@ CREATE TABLE DocumentCategory (
 CREATE TABLE Files (
   id_num int(50) unsigned ZEROFILL auto_increment,
   office_id_num int(50) NULL,
+  users_id_num int(50) NULL,
   Barcode varchar(255) NULL,
   Category varchar(255) NULL,
   Description varchar(255) NULL,
@@ -23,20 +25,21 @@ CREATE TABLE Files (
   File varchar(255) NULL,
   UploadedBy varchar(255) NULL,
   Date varchar(255) NULL,
+  Remark enum("Submitted", "Not Submitted"),
 
   PRIMARY KEY  (id_num)
 );
 
 ## Create Users table
 CREATE TABLE Users (
-  id_num int(50) unsigned ZEROFILL auto_increment,
+  users_id_num int(50) unsigned ZEROFILL auto_increment,
   Fullname varchar(255) NULL,
   Username varchar(255) NULL,
   Password varchar(255) NULL,
   AccessLevel varchar(255) NULL,
   Status varchar(255) NULL,
 
-  PRIMARY KEY  (id_num)
+  PRIMARY KEY  (users_id_num)
 );
 
 ## Create Office Settings table
@@ -51,53 +54,63 @@ CREATE TABLE OfficeSettings (
 
 ## Create DEFAULT account for admin
 INSERT INTO Users (Fullname, Username, Password, Status, AccessLevel) VALUES (
-                        'John Doe', 'admin', 'xzSH+mfPQkSs', 'Activated', 'admin');
+                        'John Doe', 'admin', 'xzSH+mfPQkSs', 'Activated', 'Admin');
 
 ## Create DEFAULT account for staff
 INSERT INTO Users (Fullname, Username, Password, Status, AccessLevel) VALUES (
-                        'Jane Doe', 'staff', 'xzSH+mfPQkSs', 'Activated', 'staff');
+                        'Jane Doe', 'staff', 'xzSH+mfPQkSs', 'Activated', 'Staff');
 
 ## Insert Default Document Categories
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Voters Registration Records', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Voters Education / trainings', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'SOCE', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Reports of Election Contributions and Expenditures', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Reports of Election Contributions and Expenditures', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Non-Records (Half-Torn Ballots)', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Minutes of Voting', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Logbook of Certifications / others', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'List of Voters with Voting Records', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'List of Registered Voters', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Internal Communications', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Incoming Communications', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'EDCVL', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'DTRs / OTS', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Data Privacy Reports', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Correspondence (Routine)', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'COA Reports / Inventory', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Certificates of Canvass and Proclamation', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Certificates of Candidacy', '');
-INSERT INTO DocumentCategory (DocumentCategoryName, Description) VALUES (
-                        'Ballot Box Contents', '');   
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Voters Registration Records', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Inventory of Supplies, ORs, and Cash Books', 'Quarterly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Voters Education / trainings', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'SOCE', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Reports of Election Contributions and Expenditures', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Non-Records (Half-Torn Ballots)', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Minutes of Voting', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Logbook of Certifications / others', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'List of Voters with Voting Records', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'List of Registered Voters', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Internal Communications', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Incoming Communications', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'EDCVL', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'DTRs / OTS', 'Monthly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Data Privacy Reports', 'Monthly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'OT Accomplishment', 'Monthly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Private Practice of COMELEC Lawyers (OEO Baguio City and OEO La Trinidad)', 'Monthly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'RCD and RAAF', 'Monthly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Correspondence (Routine)', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'COA Reports / Inventory', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Certificates of Canvass and Proclamation', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Certificates of Candidacy', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Voters Certification Report', 'Quarterly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Voters Education Monitoring Report required by EID', 'Quarterly', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
+                        'Ballot Box Contents', '', '');   
 
 INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Atok');
 INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('Benguet', 'Baguio');
