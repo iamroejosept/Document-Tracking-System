@@ -3,10 +3,19 @@
    session_start();
    if(empty($_SESSION['logged_in'])){
       header('Location: ../index.html');
-   } 
+   }
 
-   $query ="SELECT * FROM Files";  
-   $result = mysqli_query($connect, $query);
+   if(isset($_REQUEST['list'])){
+      if($_REQUEST['list'] == "file"){
+         $query ="SELECT * FROM Files WHERE ArchiveStatus = 'Archived'";  
+         $result = mysqli_query($connect, $query);
+         $header = "File Archives";
+      }
+   }else{
+      $query ="SELECT * FROM Files WHERE ArchiveStatus != 'Archived'";  
+      $result = mysqli_query($connect, $query);
+      $header = "Files";
+   }   
 ?>  
 
 <!DOCTYPE html>
@@ -15,278 +24,24 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>Document Tracking System</title>
+   <title>DOCUTRACE</title>
    <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
    <link rel="stylesheet" href="../asset/css/style.css">
    <link rel="stylesheet" href="../asset/tables/datatables-bs4/css/dataTables.bootstrap4.min.css">
+   <link rel="stylesheet" href="../css/style.css">
+   <?php
+      if ($_SESSION['access_level'] == "Staff") {
+         echo "<link rel='stylesheet' href='../css/HideAdminFeature.css'>";
+      }
+   ?>
    <script src="../asset/jquery-3.6.0.min.js"></script>
    <link rel="stylesheet" href="../asset/jquery-confirm.min.css">
    <script src="../asset/jquery-confirm.min.js"></script>
-
+   <script src="../js/files.js"></script>
 </head>
-   <script>
-      $(document).ready(function() {
-         //Function for updating file record
-         $('#editFileForm').submit(function(event) {
-            event.preventDefault(); // prevent the form from submitting normally
-            var form_data = new FormData(this);
-
-            // Submit the form using AJAX
-            $.ajax({
-               url: $(this).attr('action'),
-               type: $(this).attr('method'),
-               data: form_data,
-               contentType: false,
-               processData: false,
-               cache: false,
-               dataType: 'xml', // Tell jQuery to expect an XML response
-               success: function(xml) {
-                  $(xml).find('output').each(function()
-                  {
-                     var message = $(this).attr('message');
-                     var status = $(this).attr('status');
-                     
-                     if(status == "success"){
-                        $.alert({
-                        title: 'Success!',
-                        content: message,
-                        type: 'green',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-green',
-                           action: function() {
-                              // Reload the page
-                              location.reload();
-                           }
-                           }
-                        }
-                        });
-                     }else{
-                        $.alert({
-                        title: 'Failed!',
-                        content: message,
-                        type: 'red',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-red',
-                           action: function() {
-                           }
-                           }
-                        }
-                        });
-                     }
-                  });
-               },
-               error: function(e) {
-                  $.alert({
-                     title: 'Error!',
-                     content: 'Failed to update file due to error',
-                     type: 'red',
-                     buttons: {
-                        ok: {
-                        text: 'OK',
-                        btnClass: 'btn-red'
-                        }
-                     }
-                  });
-               }
-            });
-         });
-         
-         //Function for adding file record
-         $('#addFileForm').submit(function(event) {
-            event.preventDefault(); // prevent the form from submitting normally
-            var form_data = new FormData(this);
-
-            // Submit the form using AJAX
-            $.ajax({
-               url: $(this).attr('action'),
-               type: $(this).attr('method'),
-               data: form_data,
-               contentType: false,
-               processData: false,
-               cache: false,
-               dataType: 'xml', // Tell jQuery to expect an XML response
-               success: function(xml) {
-                  $(xml).find('output').each(function()
-                  {
-                     var message = $(this).attr('message');
-                     var status = $(this).attr('status');
-                     
-                     if(status == "success"){
-                        $.alert({
-                        title: 'Success!',
-                        content: message,
-                        type: 'green',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-green',
-                           action: function() {
-                              // Reload the page
-                              location.reload();
-                           }
-                           }
-                        }
-                        });
-                     }else{
-                        $.alert({
-                        title: 'Failed!',
-                        content: message,
-                        type: 'red',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-red',
-                           action: function() {
-                           }
-                           }
-                        }
-                        });
-                     }
-                  });
-               },
-               error: function(e) {
-                  $.alert({
-                     title: 'Error!',
-                     content: 'Failed to add file due to error',
-                     type: 'red',
-                     buttons: {
-                        ok: {
-                        text: 'OK',
-                        btnClass: 'btn-red'
-                        }
-                     }
-                  });
-               }
-            });
-         });
-
-         //Function for deleting file record
-         $('#delete').on('show.bs.modal', function(e) {
-            var fileID = $(e.relatedTarget).data('file-id');
-
-            var form_data = new FormData();
-            form_data.append("id", fileID);
-
-            $('#delete-file-link').click(function(event) {
-
-               // Submit the form using AJAX
-               $.ajax({
-                  url: "../php/deleteFile.php",
-                  type: "post",
-                  data: form_data,
-                  contentType: false,
-                  processData: false,
-                  cache: false,
-                  dataType: 'xml', // Tell jQuery to expect an XML response
-                  success: function(xml) {
-                     $(xml).find('output').each(function()
-                     {
-                        var message = $(this).attr('message');
-                        var status = $(this).attr('status');
-                        
-                        if(status == "success"){
-                           $.alert({
-                           title: 'Success!',
-                           content: message,
-                           type: 'green',
-                           buttons: {
-                              ok: {
-                              text: 'OK',
-                              btnClass: 'btn-green',
-                              action: function() {
-                                 // Reload the page
-                                 location.reload();
-                              }
-                              }
-                           }
-                           });
-                        }else{
-                           $.alert({
-                           title: 'Failed!',
-                           content: message,
-                           type: 'red',
-                           buttons: {
-                              ok: {
-                              text: 'OK',
-                              btnClass: 'btn-red',
-                              action: function() {
-                              }
-                              }
-                           }
-                           });
-                        }
-                     });
-                  },
-                  error: function(e) {
-                     $.alert({
-                        title: 'Error!',
-                        content: 'Failed to delete file and record due to error',
-                        type: 'red',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-red'
-                           }
-                        }
-                     });
-                  }
-               });
-            });
-
-         });
-
-         
-      });
-   </script>
-   <style type="text/css">
-      table tr td {
-         padding: 0.3rem !important;
-      }
-      table tr td p{
-         margin-top: -0.8rem !important;
-         margin-bottom: -0.8rem !important;
-         font-size: 0.9rem;
-      }
-      td a.btn{
-         font-size: 0.7rem;
-      }
-      .btn-primary{
-         background-color: rgb(22,94,155);
-      }
-      .iconsTop{
-         color: white !important;
-      }
-
-      #File2{
-         display: inline-block;
-         width: 100%;
-         height: 100%;
-      }
-
-      #File1{
-         display: none;
-         width: 100%;
-      }
-
-      .sidebar-collapse .nav-link i.right {
-            display: none;
-         }
-
-         .main-sidebar:hover .nav-link i.right{
-            display: inline-block;
-            
-         }
-
-   </style>
-</head>
-
 <body class="hold-transition sidebar-mini layout-fixed">
    <div class="wrapper">
       <nav class="main-header navbar navbar-expand navbar-light" style="background-color: rgb(22,94,155)">
@@ -298,7 +53,7 @@
          </ul>
          <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-               <a class="nav-link iconsTop" href="#" role="button" style="margin-top: -3%;">
+               <a class="nav-link iconsTop" href="#" data-toggle='modal' data-target='#editIconUser' role="button" style="margin-top: -3%;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
                      <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
@@ -343,7 +98,17 @@
                      </a>
                   </li>
                   <li class="nav-item">
-                     <a href="files.php" class="nav-link">
+                     <a href="settings.php" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-building-fill" viewBox="0 0 16 16">
+                           <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H3Zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Z"/>
+                         </svg>
+                        <p>
+                           Office Category
+                        </p>
+                     </a>
+                  </li>
+                  <li class="nav-item">
+                     <a href="#" class="nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z"/>
                          </svg>
@@ -416,7 +181,7 @@
                         </li>
                      </ul>
                   </li> -->
-                  <li class="nav-item">
+                  <li class="nav-item adminOnly">
                      <a href="users.php" class="nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-people-fill" viewBox="0 0 16 16">
                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
@@ -426,29 +191,72 @@
                         </p>
                      </a>
                   </li>
-                  <!-- <li class="nav-item">
-                     <a href="database.html" class="nav-link">
+                  <li class="nav-item">
+                     <a href="#" class="nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-database-fill" viewBox="0 0 16 16">
                            <path d="M3.904 1.777C4.978 1.289 6.427 1 8 1s3.022.289 4.096.777C13.125 2.245 14 2.993 14 4s-.875 1.755-1.904 2.223C11.022 6.711 9.573 7 8 7s-3.022-.289-4.096-.777C2.875 5.755 2 5.007 2 4s.875-1.755 1.904-2.223Z"/>
                            <path d="M2 6.161V7c0 1.007.875 1.755 1.904 2.223C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777C13.125 8.755 14 8.007 14 7v-.839c-.457.432-1.004.751-1.49.972C11.278 7.693 9.682 8 8 8s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
                            <path d="M2 9.161V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13s3.022-.289 4.096-.777C13.125 11.755 14 11.007 14 10v-.839c-.457.432-1.004.751-1.49.972-1.232.56-2.828.867-4.51.867s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
                            <path d="M2 12.161V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13v-.839c-.457.432-1.004.751-1.49.972-1.232.56-2.828.867-4.51.867s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
-                         </svg>
+                        </svg>
                         <p>
                            Database
                         </p>
+                        <i class="right fas fa-angle-left"></i>
                      </a>
-                  </li> -->
-                  <li class="nav-item">
-                     <a href="settings.php" class="nav-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-building-fill" viewBox="0 0 16 16">
-                           <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H3Zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Z"/>
-                         </svg>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="database-backup.php" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Backup Database</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="database-restore.php" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Restore Database</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li> 
+                  <li class="nav-item adminOnly">
+                     <a href="#" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)"  class="bi bi-archive-fill" viewBox="0 0 16 16">
+                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                        </svg>
                         <p>
-                           Office Category
+                           Archives
                         </p>
+                        <i class="right fas fa-angle-left"></i>
                      </a>
-                  </li>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="category.php?list=document" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Document Archives</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="settings.php?list=office" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Office Archives</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="files.php?list=file" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>File Archives</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="users.php?list=user" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>User Archives</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li> 
+                  
                </ul>
             </nav>
          </div>
@@ -458,12 +266,12 @@
             <div class="container-fluid">
                <div class="row mb-2">
                   <div class="col-sm-6">
-                     <h1 class="m-0">List of Files</h1>
+                     <h1 class="m-0"><?php echo $header; ?></h1>
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Files</li>
+                        <li class="breadcrumb-item active"><?php echo $header; ?></li>
                      </ol>
                   </div><br>
                   <a class="btn btn-sm btn-info elevation-4" id="addNewButton" href="#" data-toggle="modal" data-target="#add" style="margin-left: 7px; background-color: rgb(22,94,155); display: none;"><i
@@ -491,7 +299,7 @@
                   </div>
                   <div class="col-sm-2">
                      <label class="float-left">Municipality</label>
-                     <input list="municipalities" class="form-control" name="municipalities">
+                     <input list="municipalities" class="form-control" id="inputDlMunicipality" name="municipalities">
                      <datalist id="municipalities">
                         
                      </datalist>
@@ -501,7 +309,7 @@
                      <input list="dlCategories" id="inputDlCategories" class="form-control" name="categories">
                      <datalist id="dlCategories">
                         <?php 
-                           $searchQuery = "SELECT DISTINCT DocumentCategoryName FROM DocumentCategory";  
+                           $searchQuery = "SELECT DISTINCT DocumentCategoryName FROM DocumentCategory WHERE ArchiveStatus = 'Not Archived'";  
                            $searchResult = mysqli_query($connect, $searchQuery);
 
                            if($searchResult != ''){
@@ -516,13 +324,13 @@
                   </div>
                   <div class="col-sm-2">
                      <label class="float-left">Date From</label>
-                     <input type="date" class="form-control" placeholder="Date From">
+                     <input type="date" class="form-control" id="dateFrom" placeholder="Date From">
                   </div>
                   <div class="col-sm-2">
                      <label class="float-left">Date To</label>
-                     <input type="date" class="form-control" placeholder="Date To">
+                     <input type="date" class="form-control" id="dateTo" placeholder="Date To">
                   </div>
-            </div>
+               </div>
             </div>
          </div>
          <section class="content">
@@ -537,7 +345,8 @@
                               <th>File Name</th>
                               <th>Barcode</th>
                               <th>Category</th>
-                              <th>Office</th>
+                              <th>Province</th>
+                              <th>City / Municipality</th>
                               <th>Uploaded by</th>
                               <th>Date Uploaded</th>
                               <th>Remark</th>
@@ -561,7 +370,6 @@
                                     $Date = $row['Date'];
                                     $office_ID = $row['office_id_num'];
                                     $Remark = $row['Remark'];
-                                    $office="";
                                     $office_province="";
                                     $office_cityMunicipality="";
                                     $icon = '';
@@ -574,7 +382,6 @@
                                        $row1 = mysqli_fetch_assoc($result1);
                                        $office_province=$row1['Province'];
                                        $office_cityMunicipality=$row1['cityMunicipality'];
-                                       $office = "{$office_province}, {$office_cityMunicipality}";
                                     }
 
                                     $sql ="SELECT * FROM DocumentCategory WHERE DocumentCategoryName='$Category'";  
@@ -613,7 +420,8 @@
                                           <td>$FileName</td>
                                           <td>$Barcode</td>
                                           <td>$Category</td>
-                                          <td>$office</td>
+                                          <td>$office_province</td>
+                                          <td>$office_cityMunicipality</td>
                                           <td>$UploadedBy</td>
                                           <td>$Date</td>
                                           <td>$Remark</td>
@@ -622,8 +430,14 @@
                                              data-file-dateUploaded='$Date' 
                                              data-file-uploadedBy='$UploadedBy' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality'
                                              data-file-remark='$Remark' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
-                                             <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-file-id='$FileId'>
-                                                <i class='fa fa-trash-alt'></i> Delete
+                                             <a class='btn btn-sm btn-danger adminOnly archiveButton' href='#' data-toggle='modal' data-target='#archive' data-file-id='$FileId'>
+                                                <i class='fa fa-archive'></i> Archive
+                                             </a>
+                                             <a class='btn btn-sm btn-danger adminOnly restoreButton' href='#' data-toggle='modal' data-target='#restore' data-file-id='$FileId'>
+                                             <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-counterclockwise' viewBox='0 0 16 16'>
+                                             <path fill-rule='evenodd' d='M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z'/>
+                                             <path d='M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z'/>
+                                             </svg> Restore
                                              </a>
                                           </td>
                                     </tr>";
@@ -638,280 +452,34 @@
          </section>
       </div>
    </div>
-   <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form action="../php/saveFile.php" method="post" id="editFileForm">
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5>File Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group" id="File1">
-                                    <label class="float-left" id="editFileLabel">Files</label>
-                                    <div class="input-group">
-                                       <div class="custom-file">
-                                          <input type="file" class="custom-file-input" name="nameEditInputFile" id="editInputFile">
-                                          <label class="custom-file-label" id="labelEditInputFile" for="editInputFile">File</label>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-group my-3" id="File2">
-                                    <iframe id="viewFileFrame" width="100%" height="500"></iframe>
-                                    <a href="#" id="viewFileName"></a>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Barcode</label>
-                                    <input type="text" class="form-control" name="nameEditBarcode" id="editBarcode" placeholder="Barcode" disabled>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Category Name</label>
-                                    <select class="form-control" name="nameEditCategoryName" id="editCategoryName" disabled>
-                                    <?php 
-                                          $query = "SELECT * FROM DocumentCategory";  
-                                          $result = mysqli_query($connect, $query);
+   <!-- Modals -->
+   <?php 
+      include '../modals/edit-icon-user-modal.php'; 
+      include '../modals/add-files-modal.php'; 
+      include '../modals/archive-modal.php';
+      include '../modals/edit-files-modal.php'; 
+      include '../modals/restore-modal.php'; 
 
-                                          if($result != ''){
-                                             while($row = mysqli_fetch_array($result)){  
-                                                $DocumentCategoryName = $row['DocumentCategoryName'];
-                                                
-                                                echo "  
-                                                <option value='$DocumentCategoryName'>$DocumentCategoryName</option>
-                                                ";
-                                             }  
-                                          }  
-                                       ?>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Frequency</label>
-                                    <span type="text" id="frequency" class="form-control border-0 bg-transparent d-flex"></span>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Province</label>
-                                    <select class="form-control" name="namefileProvince" id="editFileProvince" disabled>
-                                       <?php 
-                                          $query = "SELECT DISTINCT Province FROM OfficeSettings";  
-                                          $result = mysqli_query($connect, $query);
+      if(isset($_REQUEST['list'])){
+         if($_REQUEST['list'] == "file"){
+            echo "<style>
+               #addNewButton, #cancelButton, #editButton{
+                  display: none !important;
+               }
 
-                                          if($result != ''){
-                                             while($row = mysqli_fetch_array($result)){  
-                                                $Province = $row['Province'];
-                                                
-                                                echo "  
-                                                <option value='$Province'>$Province</option>
-                                                ";
-                                             }  
-                                          }  
-                                       ?>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">City/Municipality</label>
-                                    <select class="form-control" name="namefileCityMunicipality" id="editFileCityMunicipality" disabled>
-                                       
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Uploaded By</label>
-                                    <span type="text" id="uploadedBy" class="form-control border-0 bg-transparent d-flex"></span>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Date Uploaded</label>
-                                    <input type="date" id="editDateUploaded" class="form-control" name="nameEditDateUploaded" placeholder="Date Uploaded" disabled>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" id="editDescription" name="nameEditDescription" placeholder="Description" disabled></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">File Location</label>
-                                    <textarea class="form-control" id="editFileLocation" name="nameEditFileLocation" placeholder="File Location" disabled></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Remark</label>
-                                    <select class="form-control" name="nameEditRemark" id="editRemark" disabled>
-                                       <option value="Submitted">Submitted</option>
-                                       <option value="Not Submitted">Not Submitted</option>
-                                    </select>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
-                     <input type="hidden" name="nameEditID" id="hiddenId">
-                     <button type="button" id="editButton" class="btn btn-info" style="background-color: rgb(22,94,155);">Edit</button>
-                     <button type="submit" id="saveButton" class="btn btn-info" style="background-color: rgb(22,94,155); display: none;">Save</button>
-                  </div>
-               </form>
-            </div>
-         </div>
-      </div>
-   </div>
+               .restoreButton{
+                  display: inline-block;
+               }
+
+               .archiveButton{
+                  display: none;
+               }
+
+            </style>";
    
-   <div id="delete" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <img src="../asset/img/sent.png" alt="" width="50" height="46">
-               <h3>Are you sure want to delete this File?</h3>
-               <div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                  <a type="submit" class="btn btn-danger" id="delete-file-link">Delete</a>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <div id="add" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form action="../php/addFile.php" method="post" id="addFileForm" enctype="multipart/form-data">
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5>File Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label  class="float-left">Files</label>
-                                    <div class="input-group">
-                                       <div class="custom-file">
-                                          <input type="file" class="custom-file-input" name="inputFile" id="exampleInputFile">
-                                          <label class="custom-file-label" id="labelInputFile" for="exampleInputFile">Choose file</label>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Barcode</label>
-                                    <input type="text" class="form-control" name="txtBarcode" placeholder="Barcode">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Category Name</label>
-                                    <select class="form-control" name="fileCategory" id="fileCategory">
-                                       <option selected disabled>Choose Category</option>
-                                       <?php 
-                                          $query = "SELECT * FROM DocumentCategory";  
-                                          $result = mysqli_query($connect, $query);
-
-                                          if($result != ''){
-                                             while($row = mysqli_fetch_array($result)){  
-                                                $DocumentCategoryName = $row['DocumentCategoryName'];
-                                                
-                                                echo "  
-                                                <option>$DocumentCategoryName</option>
-                                                ";
-                                             }  
-                                          }  
-                                       ?>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">Province</label>
-                                    <select class="form-control" name="fileProvince" id="fileProvince">
-                                       <option selected disabled>Choose Province</option>
-                                       <?php 
-                                          $query = "SELECT DISTINCT Province FROM OfficeSettings ORDER BY Province ASC";  
-                                          $result = mysqli_query($connect, $query);
-
-                                          if(mysqli_num_rows($result) > 0){
-                                             while($row = mysqli_fetch_array($result)){  
-                                                $province = $row['Province'];
-                                                
-                                                echo "  
-                                                <option value='$province'>$province</option>
-                                                ";
-                                             }  
-                                          }  
-                                       ?>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label class="float-left">City/Municipality</label>
-                                    <select class="form-control" name="fileCityMunicipality" id="fileCityMunicipality">
-                                       <option selected disabled>Select a province first</option>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Date</label>
-                                    <input type="date" id="fetchDate" class="form-control" name="fileDate" placeholder="Date">
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea class="form-control" name="fileDescription" placeholder="Description"></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">File Location</label>
-                                    <textarea class="form-control" name="fileFileLocation" placeholder="File Location"></textarea>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Remark</label>
-                                    <select class="form-control" name="fileRemark" id="fileRemark">
-                                       <option value="Submitted" selected>Submitted</option>
-                                       <option value="Not Submitted">Not Submitted</option>
-                                    </select>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
-                     <button type="submit" class="btn btn-info" style="background-color: rgb(22,94,155);">Add</button>
-                  </div>
-               </form>
-            </div>
-         </div>
-      </div>
-   </div>
+         }
+      }
+   ?>
    <!-- jQuery --> 
    <script src="../asset/js/bootstrap.bundle.min.js"></script>
    <script src="../asset/js/adminlte.js"></script>
@@ -920,247 +488,6 @@
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-   <script>
-      $(function () {
-         $("#fileDatatable").DataTable();
-      });
-
-      // Update the label of the custom file input with the name of the selected file
-      $('#exampleInputFile').on('change', function() {
-         // Get the name of the selected file
-         var fileName = $(this).val().split('\\').pop();
-         // Update the label with the name of the file
-         $('#labelInputFile').text(fileName);
-      });
-
-      // Update the label of the custom file input with the name of the selected file
-      $('#editInputFile').on('change', function() {
-         // Get the name of the selected file
-         var fileName = $(this).val().split('\\').pop();
-         // Update the label with the name of the file
-         $('#labelEditInputFile').text(fileName);
-      });
-
-      function populateEditModal(button) {
-         var file_id = button.getAttribute('data-file-id');
-         var file = button.getAttribute('data-file');
-         var file_category = button.getAttribute('data-file-category');
-         var file_barcode = button.getAttribute('data-file-barcode');
-         var file_description = button.getAttribute('data-file-description');
-         var file_fileLocation = button.getAttribute('data-file-fileLocation');
-         var file_dateUploaded = button.getAttribute('data-file-dateUploaded');
-         var file_province = button.getAttribute('data-office-province');
-         var file_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
-         var file_frequency = button.getAttribute('data-file-frequency');
-         var file_remark = button.getAttribute('data-file-remark');
-         var file_uploadedBy = button.getAttribute('data-file-uploadedBy');
-
-         document.getElementById('hiddenId').value = file_id;
-         document.getElementById('labelEditInputFile').innerHTML = file;
-         document.getElementById('frequency').innerHTML = file_frequency;
-         document.getElementById('editCategoryName').value = file_category;
-         document.getElementById('editBarcode').value = file_barcode;
-         document.getElementById('uploadedBy').innerHTML = file_uploadedBy;
-         document.getElementById('editDescription').value = file_description;
-         document.getElementById('editFileLocation').value = file_fileLocation;
-         document.getElementById('editDateUploaded').value = file_dateUploaded;
-
-         if (file.endsWith('.pdf')) {
-            document.getElementById('viewFileFrame').style.display = 'inline-block';
-            document.getElementById('viewFileFrame').setAttribute('src', '../files/' + file);
-            document.getElementById('viewFileName').style.display = 'none';
-         } else {
-            document.getElementById('viewFileFrame').style.display = 'none';
-            document.getElementById('viewFileName').style.display = 'inline-block';
-            document.getElementById('viewFileName').innerHTML = file;
-            document.getElementById('viewFileName').setAttribute('href', '../files/' + file);
-         }
-
-         $.ajax({
-            url: "../php/fetchMunicipalities.php",
-            method: "POST",
-            data: { province: file_province },
-            dataType: "html",
-            success: function (data) {
-               $('#editFileCityMunicipality').html(data);
-               
-               // Move the code that selects the option here
-               var selectElement = document.getElementById("editFileCityMunicipality");
-               var options = selectElement.options;
-
-               for (var i = 0; i < options.length; i++) {
-                  if (options[i].value === file_cityMunicipality) {
-                     options[i].selected = true;
-                     break;
-                  }
-               }
-            }
-         });
-
-
-         var selectElement = document.getElementById("editRemark");
-         var options = selectElement.options;
-
-         for (var i = 0; i < options.length; i++) {
-            if (options[i].value === file_remark) {
-               options[i].selected = true;
-               break;
-            }
-         }
-
-         var selectElement = document.getElementById("editFileProvince");
-         var options = selectElement.options;
-
-         for (var i = 0; i < options.length; i++) {
-            if (options[i].value === file_province) {
-               options[i].selected = true;
-               break;
-            }
-         }         
-      }
-
-      $(document).ready(function(){
-         // Get the value of AOS parameter from the URL
-         const urlParams = new URLSearchParams(window.location.search);
-         const aos = urlParams.get("AOS");
-
-         // If the value of AOS is "search", change the display of an HTML element
-         if (aos === "search") {
-            var element = document.getElementById("searchFields");
-            element.style.display = "flex";
-
-         }else{
-            var element = document.getElementById("addNewButton");
-            element.style.display = "inline-block";
-         }
-
-         const editButton = document.getElementById('editButton');
-
-         $('#fileProvince').change(function(){
-            var province = $(this).val();
-            $.ajax({
-               url:"../php/fetchMunicipalities.php",
-               method:"POST",
-               data:{province:province},
-               dataType:"html", // set the expected data type to HTML
-               success:function(data){
-                  $('#fileCityMunicipality').html(data);
-               }
-            });
-         });
-
-         $('#inputDlProvince').on('change', function() {
-            var province = $(this).val();
-            $.ajax({
-               url:"../php/fetchMunicipalities.php",
-               method:"POST",
-               data:{province:province},
-               dataType:"html", // set the expected data type to HTML
-               success:function(data){
-                  $('#municipalities').html(data);
-               }
-            });
-         });
-
-         $('#editFileProvince').change(function(){
-            var province = $(this).val();
-            $.ajax({
-               url:"../php/fetchMunicipalities.php",
-               method:"POST",
-               data:{province:province},
-               dataType:"html", // set the expected data type to HTML
-               success:function(data){
-                  $('#editFileCityMunicipality').html(data);
-               }
-            });
-         });
-
-         /* $('#fileCategory').change(function(){
-            var category = $(this).val();
-            
-            $.ajax({
-               url:"../php/fetchFrequency.php",
-               method:"POST",
-               data:{category:category},
-               dataType:"xml", // set the expected data type to HTML
-               success: function(xml) {
-                  $(xml).find('output').each(function()
-                  {
-                     var frequency = $(this).attr('frequency');
-
-                     if (frequency === 'Quarterly') {
-                        // Disable all months except March, June, September, and December
-                        $('#fetchDate').datepicker('destroy');
-                        $('#fetchDate').datepicker({
-                           format: 'yyyy-mm-dd',
-                           autoclose: true,
-                           startDate: '-20y', // Allow past dates up to 1 year ago
-                           beforeShowMonth: function(date){
-                              var month = date.getMonth();
-                              if (month == 2 || month == 5 || month == 8 || month == 11) {
-                                 return true;
-                              } else {
-                                 return false;
-                              }
-                           }
-                        });
-                     } else {
-                        // Re-enable all months
-                        $('#fetchDate').datepicker('destroy');
-                        $('#fetchDate').datepicker({
-                           format: 'yyyy-mm-dd',
-                           autoclose: true,
-                           startDate: '-20y' // Allow past dates up to 1 year ago
-                        });
-                     }
-                  });
-               }
-            });
-
-         }); */
-
-         editButton.addEventListener('click', function() {
-            const disabledElements = document.querySelectorAll('[disabled]');
-
-            disabledElements.forEach((element) => {
-               if (element.id !== "doNotInclude") {
-                  element.removeAttribute('disabled');
-               }
-            });
-
-            document.getElementById('editButton').style.display = 'none';
-            document.getElementById('saveButton').style.display = 'inline-block';
-            document.getElementById('File1').style.display = "inline-block";
-            document.getElementById('File2').style.display = "none";
-
-         });
-
-         $('#edit').on('hidden.bs.modal', function (e) {
-            document.getElementById('File1').style.display = "none";
-            document.getElementById('File2').style.display = "inline-block";
-            document.getElementById('editButton').style.display = 'inline-block';
-            document.getElementById('saveButton').style.display = 'none';
-
-            document.getElementById('editCategoryName').disabled = true;
-            document.getElementById('editBarcode').disabled = true;
-            document.getElementById('editDescription').disabled = true;
-            document.getElementById('editFileProvince').disabled = true;
-            document.getElementById('editFileCityMunicipality').disabled = true;
-            document.getElementById('editRemark').disabled = true;
-            document.getElementById('editDateUploaded').disabled = true;
-            document.getElementById('editFileLocation').disabled = true;
-
-
-
-         });
-
-         
-
-
-      });
-
-
-   </script>
 </body>
 
 </html>

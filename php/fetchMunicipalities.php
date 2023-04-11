@@ -11,7 +11,7 @@ $conn = mysqli_connect($Server, $User, $DBPassword, $Database);
 
       $output = '<option id="doNotInclude" selected disabled>Select a city/municipality</option>'; // updated default option text
 
-      $query = "SELECT DISTINCT cityMunicipality FROM OfficeSettings WHERE Province = '".$province."' ORDER BY cityMunicipality ASC";  
+      $query = "SELECT DISTINCT cityMunicipality FROM OfficeSettings WHERE Province = '".$province."' AND ArchiveStatus = 'Not Archived' ORDER BY cityMunicipality ASC";  
       $result = mysqli_query($conn, $query);
 
       if(mysqli_num_rows($result) > 0){

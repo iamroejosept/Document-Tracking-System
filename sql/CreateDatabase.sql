@@ -1,14 +1,15 @@
 ## Create Database
-DROP DATABASE if exists DTS;
-CREATE DATABASE DTS;
-USE DTS;
+DROP DATABASE if exists DOCUTRACE;
+CREATE DATABASE DOCUTRACE;
+USE DOCUTRACE;
 
 ## Create Document Category table
 CREATE TABLE DocumentCategory (
   id_num int(50) unsigned ZEROFILL auto_increment,
-  DocumentCategoryName varchar(255) NULL,
-  Description varchar(255) NULL,
+  DocumentCategoryName varchar(255) DEFAULT NULL,
+  Description varchar(255) DEFAULT NULL,
   Frequency enum("Monthly", "Quarterly", "Daily"),
+  ArchiveStatus varchar(255) DEFAULT 'Not Archived',
   
   PRIMARY KEY  (id_num)
 );
@@ -16,16 +17,16 @@ CREATE TABLE DocumentCategory (
 ## Create Files table
 CREATE TABLE Files (
   id_num int(50) unsigned ZEROFILL auto_increment,
-  office_id_num int(50) NULL,
-  users_id_num int(50) NULL,
-  Barcode varchar(255) NULL,
-  Category varchar(255) NULL,
-  Description varchar(255) NULL,
-  FileLocation varchar(255) NULL,
-  File varchar(255) NULL,
-  UploadedBy varchar(255) NULL,
-  Date varchar(255) NULL,
+  office_id_num int(50) DEFAULT NULL,
+  Barcode varchar(255) DEFAULT NULL,
+  Category varchar(255) DEFAULT NULL,
+  Description varchar(255) DEFAULT NULL,
+  FileLocation varchar(255) DEFAULT NULL,
+  File varchar(255) DEFAULT NULL,
+  UploadedBy varchar(255) DEFAULT NULL,
+  Date varchar(255) DEFAULT NULL,
   Remark enum("Submitted", "Not Submitted"),
+  ArchiveStatus varchar(255) DEFAULT 'Not Archived',
 
   PRIMARY KEY  (id_num)
 );
@@ -33,11 +34,12 @@ CREATE TABLE Files (
 ## Create Users table
 CREATE TABLE Users (
   users_id_num int(50) unsigned ZEROFILL auto_increment,
-  Fullname varchar(255) NULL,
-  Username varchar(255) NULL,
-  Password varchar(255) NULL,
-  AccessLevel varchar(255) NULL,
-  Status varchar(255) NULL,
+  Fullname varchar(255) DEFAULT NULL,
+  Username varchar(255) DEFAULT NULL,
+  Password varchar(255) DEFAULT NULL,
+  AccessLevel varchar(255) DEFAULT NULL,
+  Status varchar(255) DEFAULT NULL,
+  ArchiveStatus varchar(255) DEFAULT 'Not Archived',
 
   PRIMARY KEY  (users_id_num)
 );
@@ -45,8 +47,9 @@ CREATE TABLE Users (
 ## Create Office Settings table
 CREATE TABLE OfficeSettings (
   office_id_num int(50) unsigned ZEROFILL auto_increment,
-  Province varchar(255) NULL,
-  cityMunicipality varchar(255) NULL,
+  Province varchar(255) DEFAULT NULL,
+  cityMunicipality varchar(255) DEFAULT NULL,
+  ArchiveStatus varchar(255) DEFAULT 'Not Archived',
 
   PRIMARY KEY  (office_id_num)
 );

@@ -2,7 +2,7 @@
   $Server = "localhost";    
   $User = "root";
   $DBPassword = "";
-  $Database = "dts";
+  $Database = "docutrace";
 
   $con = mysqli_connect($Server, $User, $DBPassword, $Database);
   $connect = mysqli_connect($Server, $User, $DBPassword, $Database);

@@ -5,8 +5,18 @@
       header('Location: ../index.html');
    } 
 
-   $query ="SELECT * FROM DocumentCategory";  
-   $result = mysqli_query($connect, $query);
+   if(isset($_REQUEST['list'])){
+      if($_REQUEST['list'] == "document"){
+         $query ="SELECT * FROM DocumentCategory WHERE ArchiveStatus = 'Archived'";  
+         $result = mysqli_query($connect, $query);
+         $header = "Document Category Archives";
+
+      }
+   }else{
+      $query ="SELECT * FROM DocumentCategory WHERE ArchiveStatus != 'Archived'";  
+      $result = mysqli_query($connect, $query);
+      $header = "Document Category";
+   }
 ?>  
 
 <!DOCTYPE html>
@@ -15,264 +25,30 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>Document Tracking System</title>
+   <title>DOCUTRACE</title>
    <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
    <link rel="stylesheet" href="../asset/css/style.css">
    <link rel="stylesheet" href="../asset/tables/datatables-bs4/css/dataTables.bootstrap4.min.css">
+   <link rel="stylesheet" href="../css/style.css">
+   <?php
+      if ($_SESSION['access_level'] == "Staff") {
+         echo "<link rel='stylesheet' href='../css/HideAdminFeature.css'>";
+      }
+   ?>
    <script src="../asset/jquery-3.6.0.min.js"></script>
    <link rel="stylesheet" href="../asset/jquery-confirm.min.css">
    <script src="../asset/jquery-confirm.min.js"></script>
-   <script>
-      $(document).ready(function() {
-         //Function for updating file record
-         $('#editCategoryForm').submit(function(event) {
-            event.preventDefault(); // prevent the form from submitting normally
-            var form_data = new FormData(this);
-
-            // Submit the form using AJAX
-            $.ajax({
-               url: $(this).attr('action'),
-               type: $(this).attr('method'),
-               data: form_data,
-               contentType: false,
-               processData: false,
-               cache: false,
-               dataType: 'xml', // Tell jQuery to expect an XML response
-               success: function(xml) {
-                  $(xml).find('output').each(function()
-                  {
-                     var message = $(this).attr('message');
-                     var status = $(this).attr('status');
-                     
-                     if(status == "success"){
-                        $.alert({
-                        title: 'Success!',
-                        content: message,
-                        type: 'green',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-green',
-                           action: function() {
-                              // Reload the page
-                              location.reload();
-                           }
-                           }
-                        }
-                        });
-                     }else{
-                        $.alert({
-                        title: 'Failed!',
-                        content: message,
-                        type: 'red',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-red',
-                           action: function() {
-                           }
-                           }
-                        }
-                        });
-                     }
-                  });
-               },
-               error: function(e) {
-                  $.alert({
-                     title: 'Error!',
-                     content: 'Failed to update document category due to error',
-                     type: 'red',
-                     buttons: {
-                        ok: {
-                        text: 'OK',
-                        btnClass: 'btn-red'
-                        }
-                     }
-                  });
-               }
-            });
-         });
-
-         //Function for adding document category record
-         $('#addCategoryForm').submit(function(event) {
-            event.preventDefault(); // prevent the form from submitting normally
-            var form_data = new FormData(this);
-
-            // Submit the form using AJAX
-            $.ajax({
-               url: $(this).attr('action'),
-               type: $(this).attr('method'),
-               data: form_data,
-               contentType: false,
-               processData: false,
-               cache: false,
-               dataType: 'xml', // Tell jQuery to expect an XML response
-               success: function(xml) {
-                  $(xml).find('output').each(function()
-                  {
-                     var message = $(this).attr('message');
-                     var status = $(this).attr('status');
-                     
-                     if(status == "success"){
-                        $.alert({
-                        title: 'Success!',
-                        content: message,
-                        type: 'green',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-green',
-                           action: function() {
-                              // Reload the page
-                              location.reload();
-                           }
-                           }
-                        }
-                        });
-                     }else{
-                        $.alert({
-                        title: 'Failed!',
-                        content: message,
-                        type: 'red',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-red',
-                           action: function() {
-                           }
-                           }
-                        }
-                        });
-                     }
-                  });
-               },
-               error: function(e) {
-                  $.alert({
-                     title: 'Error!',
-                     content: 'Failed to add category due to error',
-                     type: 'red',
-                     buttons: {
-                        ok: {
-                        text: 'OK',
-                        btnClass: 'btn-red'
-                        }
-                     }
-                  });
-               }
-            });
-         });
-
-         //Function for deleting document category record
-      $('#delete').on('show.bs.modal', function(e) {
-            var categoryID = $(e.relatedTarget).data('category-id');
-
-            var form_data = new FormData();
-            form_data.append("id", categoryID);
-
-            $('#delete-category-link').click(function(event) {
-
-               // Submit the form using AJAX
-               $.ajax({
-                  url: "../php/deleteCategory.php",
-                  type: "post",
-                  data: form_data,
-                  contentType: false,
-                  processData: false,
-                  cache: false,
-                  dataType: 'xml', // Tell jQuery to expect an XML response
-                  success: function(xml) {
-                     $(xml).find('output').each(function()
-                     {
-                        var message = $(this).attr('message');
-                        var status = $(this).attr('status');
-                        
-                        if(status == "success"){
-                           $.alert({
-                           title: 'Success!',
-                           content: message,
-                           type: 'green',
-                           buttons: {
-                              ok: {
-                              text: 'OK',
-                              btnClass: 'btn-green',
-                              action: function() {
-                                 // Reload the page
-                                 location.reload();
-                              }
-                              }
-                           }
-                           });
-                        }else{
-                           $.alert({
-                           title: 'Failed!',
-                           content: message,
-                           type: 'red',
-                           buttons: {
-                              ok: {
-                              text: 'OK',
-                              btnClass: 'btn-red',
-                              action: function() {
-                              }
-                              }
-                           }
-                           });
-                        }
-                     });
-                  },
-                  error: function(e) {
-                     $.alert({
-                        title: 'Error!',
-                        content: 'Failed to delete document category due to error',
-                        type: 'red',
-                        buttons: {
-                           ok: {
-                           text: 'OK',
-                           btnClass: 'btn-red'
-                           }
-                        }
-                     });
-                  }
-               });
-            });
-
-         });
-      });
-
-      
-
-   </script>
-   <style type="text/css">
-      table tr td {
-         padding: 0.3rem !important;
-      }
-      table tr td p{
-         margin-top: -0.8rem !important;
-         margin-bottom: -0.8rem !important;
-         font-size: 0.9rem;
-      }
-      td a.btn{
-         font-size: 0.7rem;
-      }
-
-      .btn-primary{
-         background-color: rgb(22,94,155);
-      }
-      .iconsTop{
-         color: white !important;
-      }
-
-      .sidebar-collapse .nav-link i.right {
-            display: none;
-         }
-
-      .main-sidebar:hover .nav-link i.right{
-         display: inline-block;
-            
-      }
-   </style>
+   <!-- jQuery -->
+   <script src="../asset/js/bootstrap.bundle.min.js"></script>
+   <script src="../asset/js/adminlte.js"></script>
+   <!-- DataTables  & Plugins -->
+   <script src="../asset/tables/datatables/jquery.dataTables.min.js"></script>
+   <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+   <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+   <script src="../js/category.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -286,7 +62,7 @@
          </ul>
          <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-               <a class="nav-link iconsTop" href="#" role="button" style="margin-top: -3%;">
+               <a class="nav-link iconsTop" href="#" data-toggle='modal' data-target='#editIconUser' role="button" style="margin-top: -3%;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
                      <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
@@ -331,7 +107,17 @@
                   </a>
                </li>
                <li class="nav-item">
-                     <a href="files.php" class="nav-link">
+                  <a href="settings.php" class="nav-link">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-building-fill" viewBox="0 0 16 16">
+                        <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H3Zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Z"/>
+                      </svg>
+                     <p>
+                        Office Category
+                     </p>
+                  </a>
+               </li> 
+               <li class="nav-item">
+                     <a href="#" class="nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
                            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z"/>
                          </svg>
@@ -404,7 +190,7 @@
                      </li>
                   </ul>
                </li> -->
-               <li class="nav-item">
+               <li class="nav-item adminOnly">
                   <a href="users.php" class="nav-link">
                      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-people-fill" viewBox="0 0 16 16">
                         <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
@@ -414,29 +200,72 @@
                      </p>
                   </a>
                </li>
-               <!-- <li class="nav-item">
-                  <a href="database.html" class="nav-link">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-database-fill" viewBox="0 0 16 16">
-                        <path d="M3.904 1.777C4.978 1.289 6.427 1 8 1s3.022.289 4.096.777C13.125 2.245 14 2.993 14 4s-.875 1.755-1.904 2.223C11.022 6.711 9.573 7 8 7s-3.022-.289-4.096-.777C2.875 5.755 2 5.007 2 4s.875-1.755 1.904-2.223Z"/>
-                        <path d="M2 6.161V7c0 1.007.875 1.755 1.904 2.223C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777C13.125 8.755 14 8.007 14 7v-.839c-.457.432-1.004.751-1.49.972C11.278 7.693 9.682 8 8 8s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
-                        <path d="M2 9.161V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13s3.022-.289 4.096-.777C13.125 11.755 14 11.007 14 10v-.839c-.457.432-1.004.751-1.49.972-1.232.56-2.828.867-4.51.867s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
-                        <path d="M2 12.161V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13v-.839c-.457.432-1.004.751-1.49.972-1.232.56-2.828.867-4.51.867s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
-                      </svg>
-                     <p>
-                        Database
-                     </p>
-                  </a>
-               </li> -->
                <li class="nav-item">
-                  <a href="settings.php" class="nav-link">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-building-fill" viewBox="0 0 16 16">
-                        <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H3Zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Z"/>
-                      </svg>
-                     <p>
-                        Office Category
-                     </p>
-                  </a>
+                     <a href="#" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)" class="bi bi-database-fill" viewBox="0 0 16 16">
+                           <path d="M3.904 1.777C4.978 1.289 6.427 1 8 1s3.022.289 4.096.777C13.125 2.245 14 2.993 14 4s-.875 1.755-1.904 2.223C11.022 6.711 9.573 7 8 7s-3.022-.289-4.096-.777C2.875 5.755 2 5.007 2 4s.875-1.755 1.904-2.223Z"/>
+                           <path d="M2 6.161V7c0 1.007.875 1.755 1.904 2.223C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777C13.125 8.755 14 8.007 14 7v-.839c-.457.432-1.004.751-1.49.972C11.278 7.693 9.682 8 8 8s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
+                           <path d="M2 9.161V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13s3.022-.289 4.096-.777C13.125 11.755 14 11.007 14 10v-.839c-.457.432-1.004.751-1.49.972-1.232.56-2.828.867-4.51.867s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
+                           <path d="M2 12.161V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13v-.839c-.457.432-1.004.751-1.49.972-1.232.56-2.828.867-4.51.867s-3.278-.307-4.51-.867c-.486-.22-1.033-.54-1.49-.972Z"/>
+                        </svg>
+                        <p>
+                           Database
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                     </a>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="database-backup.php" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Backup Database</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="database-restore.php" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Restore Database</p>
+                           </a>
+                        </li>
+                     </ul>
                </li> 
+               <li class="nav-item adminOnly">
+                     <a href="#" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="rgb(22,94,155)"  class="bi bi-archive-fill" viewBox="0 0 16 16">
+                        <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+                        </svg>
+                        <p>
+                           Archives
+                        </p>
+                        <i class="right fas fa-angle-left"></i>
+                     </a>
+                     <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                           <a href="category.php?list=document" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Document Archives</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="settings.php?list=office" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Office Archives</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="files.php?list=file" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>File Archives</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="users.php?list=user" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>User Archives</p>
+                           </a>
+                        </li>
+                     </ul>
+                  </li> 
+               
             </ul>
          </nav>
       </div>
@@ -446,12 +275,12 @@
             <div class="container-fluid">
                <div class="row mb-2">
                   <div class="col-sm-6">
-                        <h1 class="m-0">Document Category</h1>
+                        <h1 class="m-0"><?php echo $header; ?></h1>
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item" style="color: rgb(22,94,155);"><a href="index.php">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Document Category</li>
+                        <li class="breadcrumb-item active"><?php echo $header; ?></li>
                      </ol>
                   </div>
                </div>
@@ -460,10 +289,10 @@
          <section class="content">
             <div class="container-fluid">
                <div class="card card-info">
-                  <form action="../php/addCategory.php" method="post" id="addCategoryForm">
+                  <form action="../php/addRecord.php" method="post" id="addCategoryForm">
                      <div class="card-body">
                         <div class="row">
-                           <div class="col-md-4">
+                           <div class="col-md-4" id="categoryAddSection">
                               <div class="card-header">
                                  <span class="fa"> Document Category Information</span>
                               </div>
@@ -491,14 +320,14 @@
                                     </div>
                                  </div>
                               </div>
-                              <div class="col-md-12">
+                              <div class="col-md-12" id="addButton">
                                  <button type="submit" class="btn btn-primary"><i
                         class="fa fa-plus-square"></i> Add</button>
                               </div>
                   </form>
                </div>
 
-               <div class="col-md-8" style="border-left: 1px solid #ddd;">
+               <div class="col-md-8" id="categoryLists" style="border-left: 1px solid #ddd;">
                   <table id="example1" class="table table-bordered table-hover">
                      <thead>
                         <tr>
@@ -524,8 +353,14 @@
                                           <td>$Description</td>
                                           <td class='text-center'>
                                              <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-category-id='$DocumentCategoryId' data-category-name='$DocumentCategoryName' data-description='$Description' data-frequency='$Frequency' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
-                                             <a class='btn btn-sm btn-danger' href='#' data-toggle='modal' data-target='#delete' data-category-id='$DocumentCategoryId'>
-                                                <i class='fa fa-trash-alt'></i> Delete
+                                             <a class='btn btn-sm btn-danger adminOnly archiveButton' href='#' data-toggle='modal' data-target='#archive' data-category-id='$DocumentCategoryId'>
+                                                <i class='fa fa-archive'></i> Archive
+                                             </a>
+                                             <a class='btn btn-sm btn-danger adminOnly restoreButton' href='#' data-toggle='modal' data-target='#restore' data-category-id='$DocumentCategoryId'>
+                                             <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-counterclockwise' viewBox='0 0 16 16'>
+                                             <path fill-rule='evenodd' d='M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z'/>
+                                             <path d='M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z'/>
+                                             </svg> Restore
                                              </a>
                                           </td>
                                     </tr>";
@@ -545,123 +380,43 @@
    </section>
    </div>
    </div>
-   <!-- modal for delete -->
-   <div id="delete" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <img src="../asset/img/sent.png" alt="" width="50" height="46">
-               <h3>Are you sure want to delete this Category?</h3>
-               <div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                  <a type="submit" class="btn btn-danger" id="delete-category-link">Delete</a>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <!-- modal for update -->
-   <div id="edit" class="modal animated rubberBand delete-modal" role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-         <div class="modal-content">
-            <div class="modal-body text-center">
-               <form action="../php/saveCategory.php" method="post" id="editCategoryForm">
-                  <div class="card-body">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <div class="card-header">
-                              <h5>Document Category Information</h5>
-                           </div>
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Document Category Name</label>
-                                    <input id="editTxtDCN" type="text" name="editDCN" class="form-control" disabled>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Frequency</label>
-                                    <select name="editFrequency" class="form-control" id="editFrequency" disabled>
-                                          <option value="Monthly">Monthly</option>
-                                          <option value="Quarterly">Quarterly</option>
-                                          <option value="Daily">Daily</option>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-12">
-                                 <div class="form-group">
-                                    <label class="float-left">Description</label>
-                                    <textarea id="editTADescription" name="editDescription" class="form-control" disabled></textarea>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                     <a href="#" class="btn btn-danger" data-dismiss="modal">Cancel</a>
-                     <input type="hidden" name="editID" id="hiddenId">
-                     <button type="button" id="editButton" class="btn btn-info" style="background-color: rgb(22,94,155);">Edit</button>
-                     <button id="saveButton" type="submit" class="btn btn-info" style="background-color: rgb(22,94,155); display: none;">Save</button>
-                  </div>
-               </form>
-            </div>
-         </div>
-      </div>
-   </div>
-   <!-- jQuery -->
-   <script src="../asset/js/bootstrap.bundle.min.js"></script>
-   <script src="../asset/js/adminlte.js"></script>
-   <!-- DataTables  & Plugins -->
-   <script src="../asset/tables/datatables/jquery.dataTables.min.js"></script>
-   <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-   <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>s
-   <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-   <script>
-      $(function () {
-         $("#example1").DataTable();
-      });
+   <!-- Modals -->
+   <?php 
+      include '../modals/edit-icon-user-modal.php'; 
+      include '../modals/edit-category-modal.php'; 
+      include '../modals/archive-modal.php'; 
+      include '../modals/restore-modal.php'; 
 
-      function populateEditModal(button) {
-         var category_id = button.getAttribute('data-category-id');
-         var category_name = button.getAttribute('data-category-name');
-         var description = button.getAttribute('data-description');
-         var frequency = button.getAttribute('data-frequency');
-         
-         document.getElementById('editTxtDCN').value = category_name;
-         document.getElementById('editTADescription').value = description;
-         document.getElementById('hiddenId').value = category_id;
-         document.getElementById('editFrequency').value = frequency;
+      if(isset($_REQUEST['list'])){
+         if($_REQUEST['list'] == "document"){
+            echo "<style>
+               #categoryAddSection, #cancelButton, #editButton{
+                  display: none !important;
+               }
+
+               .restoreButton{
+                  display: inline-block;
+               }
+
+               .archiveButton{
+                  display: none;
+               }
+
+               #categoryLists{
+                  border-left: 0px !important;
+               }
+
+            </style>
+            <script>
+               var element = document.getElementById('categoryLists');
+               element.classList.remove('col-md-8');
+               element.classList.add('col-md-12');
+            </script>";
+   
+         }
       }
-
-      $(document).ready(function(){
-         const editButton = document.getElementById('editButton');
-
-         editButton.addEventListener('click', function() {
-            const disabledElements = document.querySelectorAll('[disabled]');
-
-            disabledElements.forEach((element) => {
-               element.removeAttribute('disabled');
-            });
-
-            document.getElementById('editButton').style.display = 'none';
-            document.getElementById('saveButton').style.display = 'inline-block';
-
-         });
-
-         $('#edit').on('hidden.bs.modal', function (e) {
-            document.getElementById('editButton').style.display = 'inline-block';
-            document.getElementById('saveButton').style.display = 'none';
-
-            document.getElementById('editTxtDCN').disabled = true;
-            document.getElementById('editTADescription').disabled = true;
-            document.getElementById('editFrequency').disabled = true;
-
-         });
-         
-      });
-   </script>
+   ?>
+   
 </body>
 
 </html>

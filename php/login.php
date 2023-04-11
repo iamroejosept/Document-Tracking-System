@@ -112,6 +112,7 @@
                     $Verify = true;
                     $_SESSION['logged_in'] = 1;
                     $_SESSION['user_id'] = stripslashes($Row['users_id_num']);
+                    $_SESSION['access_level'] = stripslashes($Row['AccessLevel']);
                 }
                 else{
                     $Message = "Incorrect username or password. Please try again.";

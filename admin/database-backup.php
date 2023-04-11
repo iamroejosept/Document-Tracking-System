@@ -11,7 +11,7 @@
 <html lang="en">
 
 <head>
-   <meta charset="utf-8">
+<meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>DOCUTRACE</title>
    <link rel="icon" href="../asset/img/icon.png" type="image/png">
@@ -32,18 +32,12 @@
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-   <?php
-      if ($_SESSION['access_level'] == "Staff") {
-         echo "<link rel='stylesheet' href='../css/HideAdminFeature.css'>";
-      }
-   ?>
-   <script src="../js/index.js"></script>
    
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
    <div class="wrapper">
-      <nav class="main-header navbar navbar-expand navbar-light" style="background-color: rgb(22,94,155)">
+   <nav class="main-header navbar navbar-expand navbar-light" style="background-color: rgb(22,94,155)">
          <!-- Left navbar links -->
          <ul class="navbar-nav">
             <li class="nav-item">
@@ -67,10 +61,10 @@
          </ul>
       </nav>
       <aside class="main-sidebar sidebar-light-primary">
-            <!-- Brand Logo -->
-            <a href="index.php" class="brand-link">
-        <!--  <img src="../asset/img/logo.png" alt="DSMS Logo" width="200"> -->
-        <img src="../asset/img/DOCUTRACE.png" alt="DOCUTRACE Logo" id="docutraceLogo">
+         <!-- Brand Logo -->
+         <a href="index.php" class="brand-link">
+             <!--  <img src="../asset/img/logo.png" alt="DSMS Logo" width="200"> -->
+            <img src="../asset/img/DOCUTRACE.png" alt="DOCUTRACE Logo" id="docutraceLogo">
          </a>
          <div class="sidebar">
             <nav class="mt-2">
@@ -263,12 +257,13 @@
          <div class="content-header">
             <div class="container-fluid">
                <div class="row mb-2">
-                  <div class="col-sm-6">
-                     <h1 class="m-0">Dashboard</h1>
+                  <div class="col-sm-6 animated bounceInRight">
+                     <h1 class="m-0">Backup Database</h1>
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">Dashboard</li>
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Database</li>
                      </ol>
                   </div>
                </div>
@@ -276,127 +271,44 @@
          </div>
          <section class="content">
             <div class="container-fluid">
-               <div class="row">
-                  <div class="col-md-6">
-                     <div class="info-box">
-                        <a href="category.php" class="info-box-icon">
-                           <span class="info-box-icon text-success" style="height: 100%;"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="rgb(22,94,155)" class="bi bi-bookmark-dash-fill" viewBox="0 0 16 16">
-                                 <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zM6 6a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1H6z"/>
-                              </svg></span>
-                        </a>
-                           
-                        <div class="info-box-content">
-                           <span class="info-box-text">
-                              <h5>Number of Document Categories</h5>
-                           </span>
-                           <span class="info-box-number">
-                              <?php 
-                                    $query ="SELECT COUNT(*) as count FROM DocumentCategory";  
-                                    $result = mysqli_query($connect, $query);
-
-                                    if($result){
-                                       $row = mysqli_fetch_assoc($result);
-                                       echo "<h2>" . $row['count'] . "</h2>";
-                                    }
-                              ?>
-                           </span>
+               <div class="card card-info">
+                  <form action="../php/backup.php" method="POST">
+                     <div class="card-body">
+                        <div class="row">
+                           <div class="col-md-12">
+                              <div class="row">
+                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                       <label for="backup_name">Backup Name</label>
+                                       <input type="text" class="form-control" name="backup_name" placeholder="Backup Name">
+                                    </div>
+                                 </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                       <label for="backup_date">Backup Date</label>
+                                       <input type="date" name="backup_date" class="form-control">
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
                         </div>
+
                      </div>
-                  </div>
-                  <div class="col-md-6">
-                     <div class="info-box">
-                        <a href="files.php" class="info-box-icon">
-                           <span class="info-box-icon text-info" style="height: 100%;"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="rgb(22,94,155)" class="bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-                              <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z"/>
-                           </svg></span>
-                        </a>
-                        <div class="info-box-content">
-                           <span class="info-box-text">
-                              <h5>Number of Files</h5>
-                           </span>
-                           <span class="info-box-number">
-                              <?php 
-                                    $query ="SELECT COUNT(*) as count FROM Files";  
-                                    $result = mysqli_query($connect, $query);
 
-                                    if($result){
-                                       $row = mysqli_fetch_assoc($result);
-                                       echo "<h2>" . $row['count'] . "</h2>";
-                                    }
-                              ?>
-                           </span>
-                        </div>
+                     <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Backup</button>
                      </div>
-                  </div>
-                  <div class="col-md-6 adminOnly">
-                     <div class="info-box">
-                        <a href="users.php" class="info-box-icon">
-                           <span class="info-box-icon text-info" style="height: 100%;"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="rgb(22,94,155)" class="bi bi-people-fill" viewBox="0 0 16 16">
-                              <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
-                           </svg></span>
-                        </a>
-
-                        <div class="info-box-content">
-                           <span class="info-box-text">
-                              <h5>Number of Users</h5>
-                           </span>
-                           <span class="info-box-number">
-                              <?php 
-                                    $query ="SELECT COUNT(*) as count FROM Users";  
-                                    $result = mysqli_query($connect, $query);
-
-                                    if($result){
-                                       $row = mysqli_fetch_assoc($result);
-                                       echo "<h2>" . $row['count'] . "</h2>";
-                                    }
-                              ?>
-                           </span>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-md-12" id="NumberOfficeCategory">
-                     <div class="info-box">
-                        <a href="settings.php" class="info-box-icon">
-                           <span class="info-box-icon text-info" style="height: 100%;"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="rgb(22,94,155)" class="bi bi-building-fill" viewBox="0 0 16 16">
-                           <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H3Zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5Z"/>
-                         </svg></span>
-                        </a>
-
-                        <div class="info-box-content">
-                           <span class="info-box-text">
-                              <h5>Number of Office Category</h5>
-                           </span>
-                           <span class="info-box-number">
-                              <?php 
-                                    $query ="SELECT COUNT(cityMunicipality) as count FROM OfficeSettings";  
-                                    $result = mysqli_query($connect, $query);
-
-                                    if($result){
-                                       $row = mysqli_fetch_assoc($result);
-                                       echo "<h2>" . $row['count'] . "</h2>";
-                                    }
-                              ?>
-                           </span>
-                        </div>
-                     </div>
-                  </div>
+                  </form>
                </div>
             </div>
+            
          </section>
       </div>
    </div>
-   <!-- Modals -->
-   <?php 
-      include '../modals/edit-icon-user-modal.php'; 
+   <!-- jQuery -->
+   <script src="../asset/jquery/jquery.min.js"></script>
+   <script src="../asset/js/adminlte.js"></script>
 
-      if ($_SESSION['access_level'] == "Admin") {
-         echo "<script>
-            var element = document.getElementById('NumberOfficeCategory');
-            element.classList.remove('col-md-12');
-            element.classList.add('col-md-6');
-         </script>";
-      }
-   ?>
 </body>
 
 </html>
