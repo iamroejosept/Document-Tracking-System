@@ -54,6 +54,17 @@ CREATE TABLE OfficeSettings (
   PRIMARY KEY  (office_id_num)
 );
 
+## Create Document Logs table
+CREATE TABLE Logs (
+  logs_id_num int(50) unsigned ZEROFILL auto_increment,
+  User varchar(255) DEFAULT NULL,
+  LogType varchar(255) DEFAULT NULL,
+  Description text DEFAULT NULL,
+  Date DATETIME DEFAULT NULL,
+
+  PRIMARY KEY  (logs_id_num)
+);
+
 
 ## Create DEFAULT account for admin
 INSERT INTO Users (Fullname, Username, Password, Status, AccessLevel) VALUES (

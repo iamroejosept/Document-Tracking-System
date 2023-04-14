@@ -31,8 +31,7 @@
    <script src="../asset/tables/datatables/jquery.dataTables.min.js"></script>
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-   <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-   
+   <script src="../js/backup.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -262,7 +261,7 @@
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active">Database</li>
                      </ol>
                   </div>
@@ -272,7 +271,7 @@
          <section class="content">
             <div class="container-fluid">
                <div class="card card-info">
-                  <form action="../php/backup.php" method="POST">
+                  <form action="../php/backup.php" id="backupForm" method="POST">
                      <div class="card-body">
                         <div class="row">
                            <div class="col-md-12">
@@ -292,7 +291,6 @@
                               </div>
                            </div>
                         </div>
-
                      </div>
 
                      <div class="card-footer">
@@ -305,10 +303,12 @@
          </section>
       </div>
    </div>
-   <!-- jQuery -->
-   <script src="../asset/jquery/jquery.min.js"></script>
-   <script src="../asset/js/adminlte.js"></script>
-
+   
+   <?php
+      include '../modals/loading-animation-modal.php'; 
+      include '../modals/edit-icon-user-modal.php'; 
+   ?>
+   
 </body>
 
 </html>

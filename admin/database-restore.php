@@ -31,7 +31,6 @@
    <script src="../asset/tables/datatables/jquery.dataTables.min.js"></script>
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-   <script src="../asset/tables/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
    <script src="../js/restore.js"></script>
 </head>
 
@@ -262,7 +261,7 @@
                   </div>
                   <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active">Database</li>
                      </ol>
                   </div>
@@ -272,14 +271,14 @@
          <section class="content">
             <div class="container-fluid">
                <div class="card card-info">
-                  <form action="../php/restore.php" method="POST" enctype="multipart/form-data">
+                  <form action="../php/restore.php" id="restoreForm" method="POST" enctype="multipart/form-data">
                      <div class="card-body">
                         <div class="row">
                            <div class="col-md-12">
                               <div class="row">
                                  <div class="col-md-6">
                                     <div class="form-group">
-                                    <label  class="float-left">Backup File</label>
+                                    <label  class="float-left">Restore File</label>
                                         <div class="input-group">
                                             <div class="custom-file">
                                                 <input type="file" class="custom-file-input" id="backup_file_input" name="backup_file" onchange="updateLabel()">
@@ -300,13 +299,14 @@
                   </form>
                </div>
             </div>
-            
          </section>
       </div>
    </div>
-   <!-- jQuery -->
-   <s src="../asset/jquery/jquery.min.js"></s>
-   <script src="../asset/js/adminlte.js"></script>
+
+   <?php
+      include '../modals/loading-animation-modal.php'; 
+      include '../modals/edit-icon-user-modal.php'; 
+   ?>
 
 </body>
 

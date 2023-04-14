@@ -1,8 +1,9 @@
 <?php
 session_start();
 
-// Require the Database and centralConnection classes
+// Require the Database, Functions, and centralConnection classes
 require_once 'Database.php';
+require_once 'Functions.php';
 require 'centralConnection.php';
 
 // Set the timezone to Asia/Manila
@@ -11,16 +12,19 @@ date_default_timezone_set('Asia/Manila');
 $message = "";
 $status = "";
 
+// Create a new instance of the Functions class
+$functions = new Functions();
+
+// Connect to the database
+$conn = mysqli_connect($Server, $User, $DBPassword, $Database);
+    
+// Check if the connection was successful
+if(!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
 // Check if the category id parameter is set in the URL
 if(isset($_POST['editID'])) {
-    // Connect to the database
-    $conn = mysqli_connect($Server, $User, $DBPassword, $Database);
-    
-    // Check if the connection was successful
-    if(!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
-
     if($_POST['target'] == "document"){
         // Escape the following to prevent SQL injection
         $categoryId = mysqli_real_escape_string($conn, $_POST['editID']);
@@ -139,6 +143,20 @@ if(isset($_POST['editID'])) {
         }
 
         if($_FILES['nameEditInputFile']['name'] == null){
+            // Get the old file data
+            $oldFileData = $functions->getFileData($editID, $conn);
+
+            $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
+            $result = mysqli_query($conn, $query);
+            $oldProvince;
+            $oldCityMunicipality;
+
+            if($result){
+                $row = mysqli_fetch_assoc($result);
+                $oldProvince = $row['Province'];
+                $oldCityMunicipality = $row['cityMunicipality'];
+            }
+
             // Build the SQL query to update the category record
             $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
             
@@ -146,6 +164,58 @@ if(isset($_POST['editID'])) {
             if(mysqli_query($conn, $sql)) {
                 $message = "File updated successfully";
                 $status = "success";
+
+                // Get the new file data
+                $newFileData = $functions->getFileData($editID, $conn);
+
+                $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
+                $result = mysqli_query($conn, $query);
+                $newProvince;
+                $newCityMunicipality;
+
+                if($result){
+                    $row = mysqli_fetch_assoc($result);
+                    $newProvince = $row['Province'];
+                    $newCityMunicipality = $row['cityMunicipality'];
+                }
+
+                // Put the old and new file data in an array
+                $FileData = array(
+                    'Old Value' => array(
+                        'Barcode' => $oldFileData['Barcode'],
+                        'Category' => $oldFileData['Category'],
+                        'Province' => $oldProvince,
+                        'City / Municipality' => $oldCityMunicipality,
+                        'Date Uploaded' => $oldFileData['Date'],
+                        'Description' => $oldFileData['Description'],
+                        'File Location' => $oldFileData['FileLocation'],
+                        'Remark' => $oldFileData['Remark']
+                    ),
+                    'New Value' => array(
+                        'Barcode' => $newFileData['Barcode'],
+                        'Category' => $newFileData['Category'],
+                        'Province' => $newProvince,
+                        'City / Municipality' => $newCityMunicipality,
+                        'Date Uploaded' => $newFileData['Date'],
+                        'Description' => $newFileData['Description'],
+                        'File Location' => $newFileData['FileLocation'],
+                        'Remark' => $newFileData['Remark']
+                    )
+                );
+
+                // Construct the description of the change
+                $description = "Commited a File: <br>";
+                foreach ($FileData['Old Value'] as $key => $oldValue) {
+                $newValue = $FileData['New Value'][$key];
+                $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                }
+
+                $currentDateTime = date('Y-m-d H:i A');
+
+                //Code for the logs
+                $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+
+                mysqli_query($conn, $sql_logs);
             } else {
                 $message = "Error updating file";
                 $status = "error";
@@ -155,6 +225,20 @@ if(isset($_POST['editID'])) {
             $fileTmpName = $_FILES['nameEditInputFile']['tmp_name']; // Temporary file path
             $uploadDir = '../files/'; // Upload directory
             $uploadPath = $uploadDir . basename($fileName);
+
+            // Get the old file data
+            $oldFileData = $functions->getFileData($editID, $conn);
+
+            $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
+            $result = mysqli_query($conn, $query);
+            $oldProvince;
+            $oldCityMunicipality;
+
+            if($result){
+                $row = mysqli_fetch_assoc($result);
+                $oldProvince = $row['Province'];
+                $oldCityMunicipality = $row['cityMunicipality'];
+            }
 
             //Delete the old file
             $sql = "SELECT * FROM Files WHERE id_num = '$editID'";
@@ -173,6 +257,60 @@ if(isset($_POST['editID'])) {
                 if(mysqli_query($conn, $sql)) {
                     $message = "File updated successfully";
                     $status = "success";
+
+                    // Get the new file data
+                    $newFileData = $functions->getFileData($editID, $conn);
+
+                    $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
+                    $result = mysqli_query($conn, $query);
+                    $newProvince;
+                    $newCityMunicipality;
+
+                    if($result){
+                        $row = mysqli_fetch_assoc($result);
+                        $newProvince = $row['Province'];
+                        $newCityMunicipality = $row['cityMunicipality'];
+                    }
+
+                    // Put the old and new file data in an array
+                    $FileData = array(
+                        'Old Value' => array(
+                            'File' => $oldFileData['File'],
+                            'Barcode' => $oldFileData['Barcode'],
+                            'Category' => $oldFileData['Category'],
+                            'Province' => $oldProvince,
+                            'City / Municipality' => $oldCityMunicipality,
+                            'Date Uploaded' => $oldFileData['Date'],
+                            'Description' => $oldFileData['Description'],
+                            'File Location' => $oldFileData['FileLocation'],
+                            'Remark' => $oldFileData['Remark']
+                        ),
+                        'New Value' => array(
+                            'File' => $newFileData['File'],
+                            'Barcode' => $newFileData['Barcode'],
+                            'Category' => $newFileData['Category'],
+                            'Province' => $newProvince,
+                            'City / Municipality' => $newCityMunicipality,
+                            'Date Uploaded' => $newFileData['Date'],
+                            'Description' => $newFileData['Description'],
+                            'File Location' => $newFileData['FileLocation'],
+                            'Remark' => $newFileData['Remark']
+                        )
+                    );
+
+                    // Construct the description of the change
+                    $description = "Commited a File: <br>";
+                    foreach ($FileData['Old Value'] as $key => $oldValue) {
+                    $newValue = $FileData['New Value'][$key];
+                    $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                    }
+
+                    $currentDateTime = date('Y-m-d H:i A');
+
+                    //Code for the logs
+                    $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+
+                    mysqli_query($conn, $sql_logs);
                 } else {
                     $message = "Error updating file";
                     $status = "error";
@@ -209,4 +347,5 @@ echo '</Document>';
     
 // Close the database connection
 mysqli_close($conn);
+
 ?>

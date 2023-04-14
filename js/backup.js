@@ -1,16 +1,9 @@
-function updateLabel() {
-    var input = document.getElementById("backup_file_input");
-    var label = document.getElementById("backup_file_label");
-    var fileName = input.files[0].name;
-    label.innerHTML = fileName;
-}
-
 $(window).on('load', function() {
-    $('#loadingModal').modal('hide'); // Hide the loading modal when the page is fully loaded
+   $('#loadingModal').modal('hide'); // Hide the loading modal when the page is fully loaded
 });
 
 $(document).ready(function() {
-    const editIconUserButton = document.getElementById('editIconUserButton');
+   const editIconUserButton = document.getElementById('editIconUserButton');
 
    editIconUserButton.addEventListener('click', function() {
       const disabledElements = document.querySelectorAll('[disabled]');
@@ -128,77 +121,76 @@ $(document).ready(function() {
       });
    });
 
-    $('#restoreForm').on('submit', function(e) {
-        $('#loadingModal').modal('show'); // Show the loading modal
-    });
+   $('#backupForm').on('submit', function(e) {
+      $('#loadingModal').modal('show'); // Show the loading modal
+  });
 
     //Function for backing up a database
-    $('#restoreForm').submit(function(event) {
-        event.preventDefault(); // prevent the form from submitting normally
-        var form_data = new FormData(this);
+    $('#backupForm').submit(function(event) {
+      event.preventDefault(); // prevent the form from submitting normally
+      var form_data = new FormData(this);
 
-        // Submit the form using AJAX
-        $.ajax({
-        url: $(this).attr('action'),
-        type: $(this).attr('method'),
-        data: form_data,
-        contentType: false,
-        processData: false,
-        cache: false,
-        dataType: 'xml', // Tell jQuery to expect an XML response
-        success: function(xml) {
+      // Submit the form using AJAX
+      $.ajax({
+         url: $(this).attr('action'),
+         type: $(this).attr('method'),
+         data: form_data,
+         contentType: false,
+         processData: false,
+         cache: false,
+         dataType: 'xml', // Tell jQuery to expect an XML response
+         success: function(xml) {
             $(xml).find('output').each(function()
             {
-                var message = $(this).attr('message');
-                var status = $(this).attr('status');
-                
-                if(status == "success"){
-                    $.alert({
-                    title: 'Success!',
-                    content: message,
-                    type: 'green',
-                    buttons: {
-                    ok: {
-                    text: 'OK',
-                    btnClass: 'btn-green',
-                    action: function() {
+               var message = $(this).attr('message');
+               var status = $(this).attr('status');
+               
+               if(status == "success"){
+                  $.alert({
+                  title: 'Success!',
+                  content: message,
+                  type: 'green',
+                  buttons: {
+                     ok: {
+                     text: 'OK',
+                     btnClass: 'btn-green',
+                     action: function() {
                         // Reload the page
                         location.reload();
-                    }
-                    }
-                    }
-                    });
-                }else{
-                    $.alert({
-                    title: 'Failed!',
-                    content: message,
-                    type: 'red',
-                    buttons: {
-                    ok: {
-                    text: 'OK',
-                    btnClass: 'btn-red',
-                    action: function() {
-                    }
-                    }
-                    }
-                    });
-                }
+                     }
+                     }
+                  }
+                  });
+               }else{
+                  $.alert({
+                  title: 'Failed!',
+                  content: message,
+                  type: 'red',
+                  buttons: {
+                     ok: {
+                     text: 'OK',
+                     btnClass: 'btn-red',
+                     action: function() {
+                     }
+                     }
+                  }
+                  });
+               }
             });
-        },
-        error: function(e) {
+         },
+         error: function(e) {
             $.alert({
-                title: 'Error!',
-                content: 'Failed to restore database due to error',
-                type: 'red',
-                buttons: {
-                    ok: {
-                    text: 'OK',
-                    btnClass: 'btn-red'
-                    }
-                }
+               title: 'Error!',
+               content: 'Failed to backup database due to error',
+               type: 'red',
+               buttons: {
+                  ok: {
+                  text: 'OK',
+                  btnClass: 'btn-red'
+                  }
+               }
             });
-        }
-        });
-    });
-
+         }
+      });
+   });
 });
