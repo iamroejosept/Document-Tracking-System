@@ -18,6 +18,7 @@ if(!$conn) {
 
 $message = "";
 $status = "";
+$user_name = $_SESSION['user_id'];
 
 if($_POST['target'] == "document"){
     $DCN = mysqli_real_escape_string($conn, $_POST['addDCN']);
@@ -31,6 +32,27 @@ if($_POST['target'] == "document"){
     if(mysqli_query($conn, $sql)) {
         $message = "Document category inserted successfully";
         $status = "success";
+
+        $DocumentData = array(
+            'Document Value' => array(
+                'Document Category' => $DCN,
+                'Description' => $Description,
+                'Frequency' => $Frequency
+            )
+        );
+
+        // Construct the description of the change
+        $description = "Added a Document Category: <br>";
+        foreach ($DocumentData['Document Value'] as $key => $Value) {
+            $description .= sprintf("%s: %s<br> ", $key, $Value);
+        }
+
+        $currentDateTime = date('Y-m-d H:i A');
+
+        //Code for the logs
+        $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+
+         mysqli_query($conn, $sql_logs);
     } else {
         $message = "Error inserting document category into database";
         $status = "error";
@@ -46,6 +68,26 @@ if($_POST['target'] == "document"){
     if(mysqli_query($conn, $sql)) {
         $message = "Office category inserted successfully";
         $status = "success";
+
+        $OfficeData = array(
+            'Office Value' => array(
+                'Province' => $province,
+                'City / Municipality' => $cityMunicipality
+            )
+        );
+
+        // Construct the description of the change
+        $description = "Added an Office Category: <br>";
+        foreach ($OfficeData['Office Value'] as $key => $Value) {
+            $description .= sprintf("%s: %s<br> ", $key, $Value);
+        }
+
+        $currentDateTime = date('Y-m-d H:i A');
+
+        //Code for the logs
+        $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+
+         mysqli_query($conn, $sql_logs);
     } else {
         $message = "Error inserting office category into database";
         $status = "error";
@@ -83,6 +125,28 @@ if($_POST['target'] == "document"){
     if ($result) {
         $message = "User added successfully";
         $status = "success";
+
+        $UserData = array(
+            'User Value' => array(
+                'Full Name' => $fullName,
+                'Username' => $username,
+                'Access Level' => $accessLevel,
+                'Status' => 'Activated'
+            )
+        );
+
+        // Construct the description of the change
+        $description = "Added a User: <br>";
+        foreach ($UserData['User Value'] as $key => $Value) {
+            $description .= sprintf("%s: %s<br> ", $key, $Value);
+        }
+
+        $currentDateTime = date('Y-m-d H:i A');
+
+        //Code for the logs
+        $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+
+         mysqli_query($conn, $sql_logs);
     } else {
         $message = "Error adding user into database";
         $status = "error";
@@ -91,7 +155,6 @@ if($_POST['target'] == "document"){
     $office="";
     $fileName = "";
     $fileTmpName = "";
-    $user_name = $_SESSION['user_id'];
     $fileCategory = mysqli_real_escape_string($conn, $_POST['fileCategory']);
     $barcode = mysqli_real_escape_string($conn, $_POST['txtBarcode']);
     $fileDescription = mysqli_real_escape_string($conn, $_POST['fileDescription']);
@@ -127,6 +190,33 @@ if($_POST['target'] == "document"){
             if ($result) {
                 $message = "File uploaded and record inserted successfully";
                 $status = "success";
+
+                $FileData = array(
+                    'File Value' => array(
+                        'File' => $fileName,
+                        'Barcode' => $barcode,
+                        'Category' => $fileCategory,
+                        'Province' => $fileProvince,
+                        'City / Municipality' => $fileCityMunicipality,
+                        'Date Uploaded' => $fileDateUploaded,
+                        'Description' => $fileDescription,
+                        'File Location' => $fileLocation,
+                        'Remark' => $fileRemark
+                    )
+                );
+        
+                // Construct the description of the change
+                $description = "Added a File: <br>";
+                foreach ($FileData['File Value'] as $key => $Value) {
+                    $description .= sprintf("%s: %s<br> ", $key, $Value);
+                }
+        
+                $currentDateTime = date('Y-m-d H:i A');
+        
+                //Code for the logs
+                $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+        
+                 mysqli_query($conn, $sql_logs);
             } else {
                 $message = "Error inserting record into database";
                 $status = "error";
@@ -143,6 +233,32 @@ if($_POST['target'] == "document"){
         if ($result) {
             $message = "Record inserted successfully";
             $status = "success";
+
+            $FileData = array(
+                'File Value' => array(
+                    'Barcode' => $barcode,
+                    'Category' => $fileCategory,
+                    'Province' => $fileProvince,
+                    'City / Municipality' => $fileCityMunicipality,
+                    'Date Uploaded' => $fileDateUploaded,
+                    'Description' => $fileDescription,
+                    'File Location' => $fileLocation,
+                    'Remark' => $fileRemark
+                )
+            );
+    
+            // Construct the description of the change
+            $description = "Added a File: <br>";
+            foreach ($FileData['File Value'] as $key => $Value) {
+                $description .= sprintf("%s: %s<br> ", $key, $Value);
+            }
+    
+            $currentDateTime = date('Y-m-d H:i A');
+    
+            //Code for the logs
+            $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+    
+             mysqli_query($conn, $sql_logs);
         } else {
             $message = "Error inserting record into database";
             $status = "error";

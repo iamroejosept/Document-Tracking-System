@@ -11,6 +11,7 @@ date_default_timezone_set('Asia/Manila');
 
 $message = "";
 $status = "";
+$user_name = $_SESSION['user_id'];
 
 // Create a new instance of the Functions class
 $functions = new Functions();
@@ -31,6 +32,9 @@ if(isset($_POST['editID'])) {
         $categoryName = mysqli_real_escape_string($conn, $_POST['editDCN']);
         $description = mysqli_real_escape_string($conn, $_POST['editDescription']);
         $frequency = mysqli_real_escape_string($conn, $_POST['editFrequency']);
+
+        // Get the old file data
+        $oldDocumentCategoryData = $functions->getDocumentCategoryData($categoryId, $conn);
         
         // Build the SQL query to update the category record
         $sql = "UPDATE DocumentCategory SET DocumentCategoryName = '$categoryName', Description = '$description', Frequency = '$frequency' WHERE id_num = '$categoryId'";
@@ -39,6 +43,37 @@ if(isset($_POST['editID'])) {
         if(mysqli_query($conn, $sql)) {
             $message = "Document category saved successfully";
             $status = "success";
+
+            // Get the new file data
+            $newDocumentCategoryData = $functions->getDocumentCategoryData($categoryId, $conn);
+
+            // Put the old and new file data in an array
+            $DocumentCategoryData = array(
+                'Old Value' => array(
+                    'Document Category' => $oldDocumentCategoryData['DocumentCategoryName'],
+                    'Description' => $oldDocumentCategoryData['Description'],
+                    'Frequency' => $oldDocumentCategoryData['Frequency']
+                ),
+                'New Value' => array(
+                    'Document Category' => $newDocumentCategoryData['DocumentCategoryName'],
+                    'Description' => $newDocumentCategoryData['Description'],
+                    'Frequency' => $newDocumentCategoryData['Frequency']
+                )
+            );
+
+            // Construct the description of the change
+            $description = "Commited a Document Category: <br>";
+            foreach ($DocumentCategoryData['Old Value'] as $key => $oldValue) {
+                $newValue = $DocumentCategoryData['New Value'][$key];
+                $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+            }
+
+            $currentDateTime = date('Y-m-d H:i A');
+
+            //Code for the logs
+            $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+
+            mysqli_query($conn, $sql_logs);
         } else {
             $message = "Error saving record into database";
             $status = "error";
@@ -48,6 +83,9 @@ if(isset($_POST['editID'])) {
         $officeID = mysqli_real_escape_string($conn, $_POST['editID']);
         $officeProvince = mysqli_real_escape_string($conn, $_POST['editProvince']);
         $officeCityMunicipality = mysqli_real_escape_string($conn, $_POST['editCityMunicipality']);
+
+        // Get the old file data
+        $oldOfficeCategoryData = $functions->getOfficeCategoryData($officeID, $conn);
         
         // Build the SQL query to update the category record
         $sql = "UPDATE OfficeSettings SET Province = '$officeProvince', cityMunicipality = '$officeCityMunicipality' WHERE office_id_num = '$officeID'";
@@ -56,6 +94,35 @@ if(isset($_POST['editID'])) {
         if(mysqli_query($conn, $sql)) {
             $message = "Office category saved successfully";
             $status = "success";
+
+            // Get the new file data
+            $newOfficeCategoryData = $functions->getOfficeCategoryData($officeID, $conn);
+
+            // Put the old and new file data in an array
+            $OfficeCategoryData = array(
+                'Old Value' => array(
+                    'Province' => $oldOfficeCategoryData['Province'],
+                    'City / Municipality' => $oldOfficeCategoryData['cityMunicipality']
+                ),
+                'New Value' => array(
+                    'Province' => $newOfficeCategoryData['Province'],
+                    'City / Municipality' => $newOfficeCategoryData['cityMunicipality']
+                )
+            );
+
+            // Construct the description of the change
+            $description = "Commited an Office Category: <br>";
+            foreach ($OfficeCategoryData['Old Value'] as $key => $oldValue) {
+                $newValue = $OfficeCategoryData['New Value'][$key];
+                $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+            }
+
+            $currentDateTime = date('Y-m-d H:i A');
+
+            //Code for the logs
+            $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+
+            mysqli_query($conn, $sql_logs);
         } else {
             $message = "Error saving record into database";
             $status = "error";
@@ -73,6 +140,9 @@ if(isset($_POST['editID'])) {
         $result = mysqli_query($connect, $query);
         $row = mysqli_fetch_array($result);
         if($row['Password'] == $editPassword){
+            // Get the old file data
+            $oldUserData = $functions->getUsersData($editID, $conn);
+
             // Build the SQL query to update the category record
             $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$editPassword', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
             
@@ -80,6 +150,39 @@ if(isset($_POST['editID'])) {
             if(mysqli_query($conn, $sql)) {
                 $message = "User updated successfully";
                 $status = "success";
+
+                // Get the new file data
+                $newUserData = $functions->getUsersData($editID, $conn);
+
+                // Put the old and new file data in an array
+                $UserData = array(
+                    'Old Value' => array(
+                        'Full Name' => $oldUserData['Fullname'],
+                        'Username' => $oldUserData['Username'],
+                        'Access Level' => $oldUserData['AccessLevel'],
+                        'Status' => $oldUserData['Status']
+                    ),
+                    'New Value' => array(
+                        'Full Name' => $newUserData['Fullname'],
+                        'Username' => $newUserData['Username'],
+                        'Access Level' => $newUserData['AccessLevel'],
+                        'Status' => $newUserData['Status']
+                    )
+                );
+
+                // Construct the description of the change
+                $description = "Commited a User: <br>";
+                foreach ($UserData['Old Value'] as $key => $oldValue) {
+                    $newValue = $UserData['New Value'][$key];
+                    $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                }
+
+                $currentDateTime = date('Y-m-d H:i A');
+
+                //Code for the logs
+                $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+
+                mysqli_query($conn, $sql_logs);
             } else {
                 $message = "Error updating user";
                 $status = "error";
@@ -105,6 +208,9 @@ if(isset($_POST['editID'])) {
             // Use openssl_encrypt() function to encrypt the data
             $encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
 
+            // Get the old file data
+            $oldUserData = $functions->getUsersData($editID, $conn);
+
             // Build the SQL query to update the category record
             $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$encryption', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
             
@@ -112,6 +218,39 @@ if(isset($_POST['editID'])) {
             if(mysqli_query($conn, $sql)) {
                 $message = "User updated successfully";
                 $status = "success";
+
+                // Get the new file data
+                $newUserData = $functions->getUsersData($editID, $conn);
+
+                // Put the old and new file data in an array
+                $UserData = array(
+                    'Old Value' => array(
+                        'Full Name' => $oldUserData['Fullname'],
+                        'Username' => $oldUserData['Username'],
+                        'Access Level' => $oldUserData['AccessLevel'],
+                        'Status' => $oldUserData['Status']
+                    ),
+                    'New Value' => array(
+                        'Full Name' => $newUserData['Fullname'],
+                        'Username' => $newUserData['Username'],
+                        'Access Level' => $newUserData['AccessLevel'],
+                        'Status' => $newUserData['Status']
+                    )
+                );
+
+                // Construct the description of the change
+                $description = "Commited a User: <br>";
+                foreach ($UserData['Old Value'] as $key => $oldValue) {
+                    $newValue = $UserData['New Value'][$key];
+                    $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                }
+
+                $currentDateTime = date('Y-m-d H:i A');
+
+                //Code for the logs
+                $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+
+                mysqli_query($conn, $sql_logs);
             } else {
                 $message = "Error updating user";
                 $status = "error";
@@ -119,7 +258,6 @@ if(isset($_POST['editID'])) {
         }
     }elseif($_POST['target'] == "files"){
         $office = "";
-        $user_name = $_SESSION['user_id'];
 
         // Escape the following to prevent SQL injection
         $editID = mysqli_real_escape_string($conn, $_POST['editID']);
@@ -182,6 +320,7 @@ if(isset($_POST['editID'])) {
                 // Put the old and new file data in an array
                 $FileData = array(
                     'Old Value' => array(
+                        'File' => $oldFileData['File'],
                         'Barcode' => $oldFileData['Barcode'],
                         'Category' => $oldFileData['Category'],
                         'Province' => $oldProvince,
@@ -192,6 +331,7 @@ if(isset($_POST['editID'])) {
                         'Remark' => $oldFileData['Remark']
                     ),
                     'New Value' => array(
+                        'File' => $newFileData['File'],
                         'Barcode' => $newFileData['Barcode'],
                         'Category' => $newFileData['Category'],
                         'Province' => $newProvince,

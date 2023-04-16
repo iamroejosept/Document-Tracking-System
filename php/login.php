@@ -69,11 +69,11 @@
         global $Verify, $DTSDB, $Message, $AccessLevel, $TxtUserName, $TxtPassword, $accessLevel, $AccStatus;  
         
         if($accessLevel == "staff"){
-        $sql = "SELECT * FROM Users WHERE UserName = '$TxtUserName' AND AccessLevel = 'staff'";
-        $_SESSION['isStaff'] = true;
+            $sql = "SELECT * FROM Users WHERE UserName = '$TxtUserName' AND AccessLevel = 'staff' AND Status = 'Activated'";
+            $_SESSION['isStaff'] = true;
         }else{
-        $sql = "SELECT * FROM Users WHERE UserName = '$TxtUserName' AND AccessLevel = 'admin'";
-        $_SESSION['isStaff'] = false;
+            $sql = "SELECT * FROM Users WHERE UserName = '$TxtUserName' AND AccessLevel = 'admin' AND Status = 'Activated'";
+            $_SESSION['isStaff'] = false;
         }
         
         $Result = $DTSDB->Execute($sql);
