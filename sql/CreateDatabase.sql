@@ -8,7 +8,7 @@ CREATE TABLE DocumentCategory (
   id_num int(50) unsigned ZEROFILL auto_increment,
   DocumentCategoryName varchar(255) DEFAULT NULL,
   Description varchar(255) DEFAULT NULL,
-  Frequency enum("Monthly", "Quarterly", "Daily"),
+  Frequency enum("Monthly", "Quarterly", "Daily") DEFAULT NULL,
   ArchiveStatus varchar(255) DEFAULT 'Not Archived',
   
   PRIMARY KEY  (id_num)
@@ -25,7 +25,7 @@ CREATE TABLE Files (
   File varchar(255) DEFAULT NULL,
   UploadedBy varchar(255) DEFAULT NULL,
   Date varchar(255) DEFAULT NULL,
-  Remark enum("Submitted", "Not Submitted"),
+  Remark enum("Submitted", "Not Submitted") DEFAULT NULL,
   ArchiveStatus varchar(255) DEFAULT 'Not Archived',
 
   PRIMARY KEY  (id_num)

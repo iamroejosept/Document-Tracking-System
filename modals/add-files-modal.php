@@ -23,14 +23,18 @@
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">Barcode</label>
-                                    <input type="text" class="form-control" name="txtBarcode" placeholder="Barcode">
+                                    <label class="float-left">Barcode <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <input type="text" class="form-control" name="txtBarcode" placeholder="Barcode" required>
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
-                                    <label class="float-left">Category Name</label>
-                                    <select class="form-control" name="fileCategory" id="fileCategory">
+                                    <label class="float-left">Category Name <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <select class="form-control" name="fileCategory" id="fileCategory" required>
                                        <option selected disabled>Choose Category</option>
                                        <?php 
                                           $query = "SELECT * FROM DocumentCategory";  
@@ -51,8 +55,10 @@
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">Province</label>
-                                    <select class="form-control" name="fileProvince" id="fileProvince">
+                                    <label class="float-left">Province <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <select class="form-control" name="fileProvince" id="fileProvince" required>
                                        <option selected disabled>Choose Province</option>
                                        <?php 
                                           $query = "SELECT DISTINCT Province FROM OfficeSettings ORDER BY Province ASC";  
@@ -73,16 +79,20 @@
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">City/Municipality</label>
-                                    <select class="form-control" name="fileCityMunicipality" id="fileCityMunicipality">
+                                    <label class="float-left">City/Municipality <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <select class="form-control" name="fileCityMunicipality" id="fileCityMunicipality" required>
                                        <option selected disabled>Select a province first</option>
                                     </select>
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
-                                    <label class="float-left">Date</label>
-                                    <input type="date" id="fetchDate" class="form-control" name="fileDate" placeholder="Date">
+                                    <label class="float-left">Date <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <input type="date" id="fetchDate" class="form-control" name="fileDate" placeholder="Date" required>
                                  </div>
                               </div>
                               <div class="col-md-12">
@@ -93,14 +103,18 @@
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
-                                    <label class="float-left">File Location</label>
-                                    <textarea class="form-control" name="fileFileLocation" placeholder="File Location"></textarea>
+                                    <label class="float-left">File Location <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <textarea class="form-control" name="fileFileLocation" placeholder="File Location" required></textarea>
                                  </div>
                               </div>
                               <div class="col-md-12">
                                  <div class="form-group">
-                                    <label class="float-left">Remark</label>
-                                    <select class="form-control" name="fileRemark" id="fileRemark">
+                                    <label class="float-left">Remark <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <select class="form-control" name="fileRemark" id="fileRemark" required>
                                        <option value="Submitted" selected>Submitted</option>
                                        <option value="Not Submitted">Not Submitted</option>
                                     </select>

@@ -5,7 +5,7 @@
       header('Location: ../index.html');
    } 
 
-   $query ="SELECT DATE(Date) AS date_component, DATE_FORMAT(Date, '%h:%i %p') AS time_component, User, logs_id_num, Description, LogType FROM Logs";  
+   $query ="SELECT DATE(Date) AS date_component, DATE_FORMAT(Date, '%h:%i %p') AS time_component, User, logs_id_num, Description, LogType FROM Logs ORDER BY Date DESC";  
    $result = mysqli_query($connect, $query);
 ?>  
 

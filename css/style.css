@@ -67,3 +67,23 @@ table tr td p{
     border: none;
     box-shadow: none;
   }
+
+  #eyeHolder{
+   background: white;
+  }
+
+  #eye-icon{
+   color: rgba(0, 0, 0, 0.25);
+  }
+
+  #TxtPassword:focus + .input-group-append #eyeHolder {
+   border-color: rgba(0, 191, 255, 0.553);
+ }
+
+  #TxtPassword{
+   border-right: none;
+  }
+
+  .bi-asterisk{
+   margin-bottom: 3px;
+  }

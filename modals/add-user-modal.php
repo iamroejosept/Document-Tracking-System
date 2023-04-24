@@ -12,14 +12,18 @@
                            <div class="row">
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">Full Name</label>
-                                    <input type="text" class="form-control" name="addUserFullName" placeholder="Full Name">
+                                    <label class="float-left">Full Name <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <input type="text" class="form-control" name="addUserFullName" placeholder="Full Name" required>
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
-                                    <label class="float-left">Access Level</label>
-                                    <select class="form-control" name="addUserAccessLevel">
+                                    <label class="float-left">Access Level <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <select class="form-control" name="addUserAccessLevel" required>
                                        <option>Admin</option>
                                        <option>Staff</option>
                                     </select>
@@ -27,20 +31,26 @@
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Username</label>
-                                    <input type="text" class="form-control" name="addUserUsername" placeholder="Username">
+                                    <label class="float-left">Username <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <input type="text" class="form-control" name="addUserUsername" placeholder="Username" required>
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Password</label>
-                                    <input type="password" class="form-control" id="idAddUserPassword" name="addUserPassword" placeholder="**********">
+                                    <label class="float-left">Password <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <input type="password" class="form-control" id="idAddUserPassword" name="addUserPassword" placeholder="**********" required>
                                  </div>
                               </div>
                               <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Confirm Password</label>
-                                    <input type="password" class="form-control" id="idAddUserConfirmPassword" name="addUserConfirmPassword" placeholder="**********">
+                                    <label class="float-left">Confirm Password <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                    <input type="password" class="form-control" id="idAddUserConfirmPassword" name="addUserConfirmPassword" placeholder="**********" required>
                                  </div>
                               </div>
                            </div>

@@ -14,6 +14,8 @@
       <script src="asset/jquery-3.6.0.min.js"></script>
       <link rel="stylesheet" href="asset/jquery-confirm.min.css">
       <script src="asset/jquery-confirm.min.js"></script>
+      <script src="js/Login.js"></script>
+      <link rel="stylesheet" href="css/style.css">
       <script>
          $(document).ready(function() 
          {
@@ -47,22 +49,7 @@
                         if(accStatus == "Activated") {
                            //if login credentials is true
                            if (verify) {
-                                 //Display Alert Box
-                                 $.alert({
-                                    theme: 'modern',
-                                    content: message,
-                                    title: '', 
-                                    useBootstrap: false,
-                                    buttons: {
-                                       Ok: {
-                                             text: 'Ok',
-                                             btnClass: 'btn-green',
-                                             action: function() {
-                                                window.location.href = 'admin/index.php';
-                                             }
-                                       }
-                                    }
-                                 });
+                              window.location.href = 'admin/index.php';
                            } else {
                                  //Display Alert Box
                                  $.alert({
@@ -183,11 +170,14 @@
                   <div class="input-group mb-3">
                      <input type="password" class="form-control" name="TxtPassword" id="TxtPassword" placeholder="Password">
                      <div class="input-group-append">
-                        <div class="input-group-text">
-                           <span class="fas fa-lock"></span>
-                        </div>
+                       <div class="input-group-text" id="eyeHolder">
+                         <span id="eye-icon" class="fas fa-eye" onclick="togglePasswordVisibility()"></span>
+                       </div>
+                       <div class="input-group-text">
+                         <span class="fas fa-lock"></span>
+                       </div>
                      </div>
-                  </div>
+                   </div>
                   <div class="row">
                      <div class="col-6 offset-lg-3">
                         <button type="submit" class="btn btn-info btn-block" style="background-color: rgb(22,94,155)">Login</button>
