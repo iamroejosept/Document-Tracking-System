@@ -6,6 +6,7 @@ function populateEditModal(button) {
     var file_description = button.getAttribute('data-file-description');
     var file_fileLocation = button.getAttribute('data-file-fileLocation');
     var file_dateUploaded = button.getAttribute('data-file-dateUploaded');
+    var file_region = button.getAttribute('data-office-region');
     var file_province = button.getAttribute('data-office-province');
     var file_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
     var file_frequency = button.getAttribute('data-file-frequency');
@@ -32,6 +33,27 @@ function populateEditModal(button) {
        document.getElementById('viewFileName').innerHTML = file;
        document.getElementById('viewFileName').setAttribute('href', '../files/' + file);
     }
+
+    $.ajax({
+      url: "../php/fetchProvinces.php",
+      method: "POST",
+      data: { region: file_region },
+      dataType: "html",
+      success: function (data) {
+         $('#editFileProvince').html(data);
+         
+         // Move the code that selects the option here
+         var selectElement = document.getElementById("editFileProvince");
+         var options = selectElement.options;
+
+         for (var i = 0; i < options.length; i++) {
+            if (options[i].value === file_province) {
+               options[i].selected = true;
+               break;
+            }
+         }
+      }
+   });
 
     $.ajax({
        url: "../php/fetchMunicipalities.php",
@@ -65,16 +87,72 @@ function populateEditModal(button) {
        }
     }
 
-    var selectElement = document.getElementById("editFileProvince");
+    var selectElement = document.getElementById("editFileRegion");
     var options = selectElement.options;
 
     for (var i = 0; i < options.length; i++) {
-       if (options[i].value === file_province) {
+       if (options[i].value === file_region) {
           options[i].selected = true;
           break;
        }
     }         
  }
+
+  // AJAX code for updating province options based on selected region
+  function getProvinces(region) {
+   var xhr = new XMLHttpRequest();
+   xhr.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+         document.getElementById("fileProvince").innerHTML = "<option selected disabled>Select a province</option>" + this.responseText;
+         // Reset city/municipality options
+         document.getElementById("fileCityMunicipality").innerHTML = "<option selected disabled>Select a city/municipality</option>";
+      }
+   };
+   xhr.open("POST", "../php/getProvincesCities.php", true);
+   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+   xhr.send("region=" + region);
+}
+
+// AJAX code for updating city/municipality options based on selected province
+function getCities(province) {
+   var xhr = new XMLHttpRequest();
+   xhr.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+         document.getElementById("fileCityMunicipality").innerHTML = this.responseText;
+      }
+   };
+   xhr.open("POST", "../php/getProvincesCities.php", true);
+   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+   xhr.send("province=" + province);
+}
+
+// AJAX code for updating province options based on selected region
+function getProvincesEdit(region) {
+   var xhr = new XMLHttpRequest();
+   xhr.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+         document.getElementById("editFileProvince").innerHTML = "<option selected disabled>Select a province</option>" + this.responseText;
+         // Reset city/municipality options
+         document.getElementById("editFileCityMunicipality").innerHTML = "<option selected disabled>Select a city/municipality</option>";
+      }
+   };
+   xhr.open("POST", "../php/getProvincesCities.php", true);
+   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+   xhr.send("region=" + region);
+}
+
+// AJAX code for updating city/municipality options based on selected province
+function getCitiesEdit(province) {
+   var xhr = new XMLHttpRequest();
+   xhr.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+         document.getElementById("editFileCityMunicipality").innerHTML = this.responseText;
+      }
+   };
+   xhr.open("POST", "../php/getProvincesCities.php", true);
+   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+   xhr.send("province=" + province);
+}
  
  $(document).ready(function() {
     // Get the value of AOS parameter from the URL
@@ -94,7 +172,7 @@ function populateEditModal(button) {
     const editButton = document.getElementById('editButton');
     const editIconUserButton = document.getElementById('editIconUserButton');
 
-    $('#fileProvince').change(function(){
+    /* $('#fileProvince').change(function(){
        var province = $(this).val();
        $.ajax({
           url:"../php/fetchMunicipalities.php",
@@ -106,6 +184,19 @@ function populateEditModal(button) {
           }
        });
     });
+
+    $('#fileRegion').change(function(){
+      var region = $(this).val();
+      $.ajax({
+         url:"../php/fetchProvinces.php",
+         method:"POST",
+         data:{region:region},
+         dataType:"html", // set the expected data type to HTML
+         success:function(data){
+            $('#fileProvince').html(data);
+         }
+      });
+   }); */
 
     $('#inputDlProvince').on('change', function() {
        var province = $(this).val();
@@ -120,7 +211,7 @@ function populateEditModal(button) {
        });
     });
 
-    $('#editFileProvince').change(function(){
+    /* $('#editFileProvince').change(function(){
        var province = $(this).val();
        $.ajax({
           url:"../php/fetchMunicipalities.php",
@@ -132,6 +223,19 @@ function populateEditModal(button) {
           }
        });
     });
+
+    $('#editFileRegion').change(function(){
+      var region = $(this).val();
+      $.ajax({
+         url:"../php/fetchProvinces.php",
+         method:"POST",
+         data:{region:region},
+         dataType:"html", // set the expected data type to HTML
+         success:function(data){
+            $('#editFileProvince').html(data);
+         }
+      });
+   }); */
 
     /* $('#fileCategory').change(function(){
        var category = $(this).val();
@@ -202,6 +306,7 @@ function populateEditModal(button) {
        document.getElementById('editCategoryName').disabled = true;
        document.getElementById('editBarcode').disabled = true;
        document.getElementById('editDescription').disabled = true;
+       document.getElementById('editFileRegion').disabled = true;
        document.getElementById('editFileProvince').disabled = true;
        document.getElementById('editFileCityMunicipality').disabled = true;
        document.getElementById('editRemark').disabled = true;

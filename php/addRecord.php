@@ -73,6 +73,9 @@ if($_POST['target'] == "document"){
     }
 }elseif($_POST['target'] == "office"){
     // Validate input data
+    if (empty($_POST['addRegion'])) {
+        $dataValid = false;
+    }
     if (empty($_POST['addProvince'])) {
         $dataValid = false;
     }
@@ -81,11 +84,12 @@ if($_POST['target'] == "document"){
     }
 
     if ($dataValid == true) {
+        $region = mysqli_real_escape_string($conn, $_POST['addRegion']);
         $province = mysqli_real_escape_string($conn, $_POST['addProvince']);
         $cityMunicipality = mysqli_real_escape_string($conn, $_POST['addCityMunicipality']);
         
         // Build the SQL query to add the category record
-        $sql = "INSERT INTO OfficeSettings (Province, cityMunicipality) VALUES ('$province', '$cityMunicipality')";
+        $sql = "INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('$region', '$province', '$cityMunicipality')";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -94,6 +98,7 @@ if($_POST['target'] == "document"){
 
             $OfficeData = array(
                 'Office Value' => array(
+                    'Region' => $region,
                     'Province' => $province,
                     'City / Municipality' => $cityMunicipality
                 )
@@ -205,6 +210,9 @@ if($_POST['target'] == "document"){
     if (empty($_POST['fileCategory'])) {
         $dataValid = false;
     }
+    if (empty($_POST['fileRegion'])) {
+        $dataValid = false;
+    }
     if (empty($_POST['fileProvince'])) {
         $dataValid = false;
     }
@@ -230,13 +238,14 @@ if($_POST['target'] == "document"){
         $fileDescription = mysqli_real_escape_string($conn, $_POST['fileDescription']);
         $fileLocation = mysqli_real_escape_string($conn, $_POST['fileFileLocation']);
         $fileDateUploaded = mysqli_real_escape_string($conn, $_POST['fileDate']);
+        $fileRegion = mysqli_real_escape_string($conn, $_POST['fileRegion']);
         $fileProvince = mysqli_real_escape_string($conn, $_POST['fileProvince']);
         $fileCityMunicipality = mysqli_real_escape_string($conn, $_POST['fileCityMunicipality']);
         $fileRemark = mysqli_real_escape_string($conn, $_POST['fileRemark']);
 
         $fileDateUploaded = date('Y-m-d', strtotime($fileDateUploaded));
 
-        $query ="SELECT office_id_num FROM OfficeSettings WHERE Province='$fileProvince' AND cityMunicipality='$fileCityMunicipality'";
+        $query ="SELECT office_id_num FROM OfficeSettings WHERE Region='$fileRegion' AND Province='$fileProvince' AND cityMunicipality='$fileCityMunicipality'";
         $result = mysqli_query($conn, $query);
 
         if($result){
@@ -266,6 +275,7 @@ if($_POST['target'] == "document"){
                             'File' => $fileName,
                             'Barcode' => $barcode,
                             'Category' => $fileCategory,
+                            'Region' => $fileRegion,
                             'Province' => $fileProvince,
                             'City / Municipality' => $fileCityMunicipality,
                             'Date Uploaded' => $fileDateUploaded,
@@ -308,6 +318,7 @@ if($_POST['target'] == "document"){
                     'File Value' => array(
                         'Barcode' => $barcode,
                         'Category' => $fileCategory,
+                        'Region' => $fileRegion,
                         'Province' => $fileProvince,
                         'City / Municipality' => $fileCityMunicipality,
                         'Date Uploaded' => $fileDateUploaded,

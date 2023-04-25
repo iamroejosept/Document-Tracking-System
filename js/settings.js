@@ -1,8 +1,10 @@
 function populateEditModal(button) {
     var office_id = button.getAttribute('data-office-id');
+    var office_region = button.getAttribute('data-office-region');
     var office_province = button.getAttribute('data-office-province');
     var office_cityMunicipality = button.getAttribute('data-office-cityMunicipality');
     
+    document.getElementById('editTxtRegion').value = office_region;
     document.getElementById('editTxtProvince').value = office_province;
     document.getElementById('editTxtCityMunicipality').value = office_cityMunicipality;
     document.getElementById('hiddenId').value = office_id;
@@ -28,6 +30,7 @@ function populateEditModal(button) {
        document.getElementById('editButton').style.display = 'inline-block';
        document.getElementById('officeCategorySave').style.display = 'none';
 
+       document.getElementById('editTxtRegion').disabled = true;
        document.getElementById('editTxtProvince').disabled = true;
        document.getElementById('editTxtCityMunicipality').disabled = true;
 

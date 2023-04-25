@@ -81,6 +81,7 @@ if(isset($_POST['editID'])) {
     }elseif($_POST['target'] == "office"){
         // Escape the following to prevent SQL injection
         $officeID = mysqli_real_escape_string($conn, $_POST['editID']);
+        $officeRegion = mysqli_real_escape_string($conn, $_POST['editRegion']);
         $officeProvince = mysqli_real_escape_string($conn, $_POST['editProvince']);
         $officeCityMunicipality = mysqli_real_escape_string($conn, $_POST['editCityMunicipality']);
 
@@ -88,7 +89,7 @@ if(isset($_POST['editID'])) {
         $oldOfficeCategoryData = $functions->getOfficeCategoryData($officeID, $conn);
         
         // Build the SQL query to update the category record
-        $sql = "UPDATE OfficeSettings SET Province = '$officeProvince', cityMunicipality = '$officeCityMunicipality' WHERE office_id_num = '$officeID'";
+        $sql = "UPDATE OfficeSettings SET Region = '$officeRegion', Province = '$officeProvince', cityMunicipality = '$officeCityMunicipality' WHERE office_id_num = '$officeID'";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -101,10 +102,12 @@ if(isset($_POST['editID'])) {
             // Put the old and new file data in an array
             $OfficeCategoryData = array(
                 'Old Value' => array(
+                    'Region' => $oldOfficeCategoryData['Region'],
                     'Province' => $oldOfficeCategoryData['Province'],
                     'City / Municipality' => $oldOfficeCategoryData['cityMunicipality']
                 ),
                 'New Value' => array(
+                    'Region' => $newOfficeCategoryData['Region'],
                     'Province' => $newOfficeCategoryData['Province'],
                     'City / Municipality' => $newOfficeCategoryData['cityMunicipality']
                 )
@@ -266,13 +269,14 @@ if(isset($_POST['editID'])) {
         $editDescription = mysqli_real_escape_string($conn, $_POST['nameEditDescription']);
         $editFileLocation = mysqli_real_escape_string($conn, $_POST['nameEditFileLocation']);
         $editDateUploaded = mysqli_real_escape_string($conn, $_POST['nameEditDateUploaded']);
+        $editRegion = mysqli_real_escape_string($conn, $_POST['namefileRegion']);
         $editProvince = mysqli_real_escape_string($conn, $_POST['namefileProvince']);
         $editCityMunicipality = mysqli_real_escape_string($conn, $_POST['namefileCityMunicipality']);
         $editRemark = mysqli_real_escape_string($conn, $_POST['nameEditRemark']);
 
         $editDateUploaded = date('Y-m-d', strtotime($editDateUploaded));
 
-        $query ="SELECT office_id_num FROM OfficeSettings WHERE Province='$editProvince' AND cityMunicipality='$editCityMunicipality'";
+        $query ="SELECT office_id_num FROM OfficeSettings WHERE Region='$editRegion' AND Province='$editProvince' AND cityMunicipality='$editCityMunicipality'";
         $result = mysqli_query($conn, $query);
 
         if($result){
@@ -284,13 +288,15 @@ if(isset($_POST['editID'])) {
             // Get the old file data
             $oldFileData = $functions->getFileData($editID, $conn);
 
-            $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
+            $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
             $result = mysqli_query($conn, $query);
+            $oldRegion;
             $oldProvince;
             $oldCityMunicipality;
 
             if($result){
                 $row = mysqli_fetch_assoc($result);
+                $oldRegion = $row['Region'];
                 $oldProvince = $row['Province'];
                 $oldCityMunicipality = $row['cityMunicipality'];
             }
@@ -306,13 +312,15 @@ if(isset($_POST['editID'])) {
                 // Get the new file data
                 $newFileData = $functions->getFileData($editID, $conn);
 
-                $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
+                $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
                 $result = mysqli_query($conn, $query);
+                $newRegion;
                 $newProvince;
                 $newCityMunicipality;
 
                 if($result){
                     $row = mysqli_fetch_assoc($result);
+                    $newRegion = $row['Region'];
                     $newProvince = $row['Province'];
                     $newCityMunicipality = $row['cityMunicipality'];
                 }
@@ -323,6 +331,7 @@ if(isset($_POST['editID'])) {
                         'File' => $oldFileData['File'],
                         'Barcode' => $oldFileData['Barcode'],
                         'Category' => $oldFileData['Category'],
+                        'Region' => $oldRegion,
                         'Province' => $oldProvince,
                         'City / Municipality' => $oldCityMunicipality,
                         'Date Uploaded' => $oldFileData['Date'],
@@ -334,6 +343,7 @@ if(isset($_POST['editID'])) {
                         'File' => $newFileData['File'],
                         'Barcode' => $newFileData['Barcode'],
                         'Category' => $newFileData['Category'],
+                        'Region' => $newRegion,
                         'Province' => $newProvince,
                         'City / Municipality' => $newCityMunicipality,
                         'Date Uploaded' => $newFileData['Date'],
@@ -369,13 +379,15 @@ if(isset($_POST['editID'])) {
             // Get the old file data
             $oldFileData = $functions->getFileData($editID, $conn);
 
-            $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
+            $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
             $result = mysqli_query($conn, $query);
+            $oldRegion;
             $oldProvince;
             $oldCityMunicipality;
 
             if($result){
                 $row = mysqli_fetch_assoc($result);
+                $oldRegion = $row['Region'];
                 $oldProvince = $row['Province'];
                 $oldCityMunicipality = $row['cityMunicipality'];
             }
@@ -403,11 +415,13 @@ if(isset($_POST['editID'])) {
 
                     $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
                     $result = mysqli_query($conn, $query);
+                    $newRegion;
                     $newProvince;
                     $newCityMunicipality;
 
                     if($result){
                         $row = mysqli_fetch_assoc($result);
+                        $newRegion = $row['Region'];
                         $newProvince = $row['Province'];
                         $newCityMunicipality = $row['cityMunicipality'];
                     }
@@ -418,6 +432,7 @@ if(isset($_POST['editID'])) {
                             'File' => $oldFileData['File'],
                             'Barcode' => $oldFileData['Barcode'],
                             'Category' => $oldFileData['Category'],
+                            'Region' => $oldRegion,
                             'Province' => $oldProvince,
                             'City / Municipality' => $oldCityMunicipality,
                             'Date Uploaded' => $oldFileData['Date'],
@@ -429,6 +444,7 @@ if(isset($_POST['editID'])) {
                             'File' => $newFileData['File'],
                             'Barcode' => $newFileData['Barcode'],
                             'Category' => $newFileData['Category'],
+                            'Region' => $newRegion,
                             'Province' => $newProvince,
                             'City / Municipality' => $newCityMunicipality,
                             'Date Uploaded' => $newFileData['Date'],

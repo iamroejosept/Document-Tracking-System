@@ -307,6 +307,7 @@
                               <th>File Name</th>
                               <th>Barcode</th>
                               <th>Category</th>
+                              <th>Region</th>
                               <th>Province</th>
                               <th>City / Municipality</th>
                               <th>Uploaded by</th>
@@ -332,16 +333,18 @@
                                     $Date = $row['Date'];
                                     $office_ID = $row['office_id_num'];
                                     $Remark = $row['Remark'];
+                                    $office_region="";
                                     $office_province="";
                                     $office_cityMunicipality="";
                                     $icon = '';
                                     $frequency = '';
 
-                                    $sql ="SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
+                                    $sql ="SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
                                     $result1 = mysqli_query($connect, $sql);
 
                                     if($result1){
                                        $row1 = mysqli_fetch_assoc($result1);
+                                       $office_region=$row1['Region'];
                                        $office_province=$row1['Province'];
                                        $office_cityMunicipality=$row1['cityMunicipality'];
                                     }
@@ -382,6 +385,7 @@
                                           <td>$FileName</td>
                                           <td>$Barcode</td>
                                           <td>$Category</td>
+                                          <td>$office_region</td>
                                           <td>$office_province</td>
                                           <td>$office_cityMunicipality</td>
                                           <td>$UploadedBy</td>
@@ -390,7 +394,8 @@
                                           <td class='text-center'>
                                              <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-frequency='$frequency' data-file-description='$Description' data-file-fileLocation='$FileLocation' 
                                              data-file-dateUploaded='$Date' 
-                                             data-file-uploadedBy='$UploadedBy' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality'
+                                             data-file-uploadedBy='$UploadedBy' 
+                                             data-office-region='$office_region' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality'
                                              data-file-remark='$Remark' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                              <a class='btn btn-sm btn-danger adminOnly archiveButton' href='#' data-toggle='modal' data-target='#archive' data-file-id='$FileId'>
                                                 <i class='fa fa-archive'></i> Archive

@@ -58,20 +58,20 @@
                                     <span type="text" id="frequency" class="form-control border-0 bg-transparent d-flex"></span>
                                  </div>
                               </div>
-                              <div class="col-md-6">
+                              <div class="col-md-4">
                                  <div class="form-group">
-                                    <label class="float-left">Province</label>
-                                    <select class="form-control" name="namefileProvince" id="editFileProvince" disabled>
+                                    <label class="float-left">Region</label>
+                                    <select class="form-control" name="namefileRegion" id="editFileRegion" onchange="getProvincesEdit(this.value)" disabled>
                                        <?php 
-                                          $query = "SELECT DISTINCT Province FROM OfficeSettings";  
+                                          $query = "SELECT DISTINCT Region FROM OfficeSettings";  
                                           $result = mysqli_query($connect, $query);
 
                                           if($result != ''){
                                              while($row = mysqli_fetch_array($result)){  
-                                                $Province = $row['Province'];
+                                                $Region = $row['Region'];
                                                 
                                                 echo "  
-                                                <option value='$Province'>$Province</option>
+                                                <option value='$Region'>$Region</option>
                                                 ";
                                              }  
                                           }  
@@ -79,7 +79,14 @@
                                     </select>
                                  </div>
                               </div>
-                              <div class="col-md-6">
+                              <div class="col-md-4">
+                                 <div class="form-group">
+                                    <label class="float-left">Province</label>
+                                    <select class="form-control" name="namefileProvince" id="editFileProvince" onchange="getCitiesEdit(this.value)" disabled>
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="col-md-4">
                                  <div class="form-group">
                                     <label class="float-left">City/Municipality</label>
                                     <select class="form-control" name="namefileCityMunicipality" id="editFileCityMunicipality" disabled>

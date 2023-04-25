@@ -253,6 +253,14 @@
                               <div class="row">
                                  <div class="col-md-12">
                                     <div class="form-group">
+                                       <label>Region <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                       <input type="text" class="form-control" name="addRegion" value="Cordillera Administrative Region (CAR)" required >
+                                    </div>
+                                 </div>
+                                 <div class="col-md-12">
+                                    <div class="form-group">
                                        <label>Province <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
                                        <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
                                        </svg></label>
@@ -279,6 +287,7 @@
                   <table id="example1" class="table table-bordered table-hover">
                      <thead>
                         <tr>
+                           <th>Region</th>
                            <th>Province</th>
                            <th>City/Municipality</th>
                            <th class="text-center">Action</th>
@@ -288,16 +297,18 @@
                            <?php        
                               if($result != ''){
                                  while($row = mysqli_fetch_array($result)){  
+                                    $officeRegion = $row['Region'];
                                     $officeProvince = $row['Province'];
                                     $officeIDNum = $row['office_id_num'];
                                     $officeCityMunicipality = $row['cityMunicipality'];
 
                                     echo "  
                                     <tr>
+                                          <td>$officeRegion</td>
                                           <td>$officeProvince</td>
                                           <td>$officeCityMunicipality</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-office-id='$officeIDNum' data-office-province='$officeProvince' data-office-cityMunicipality='$officeCityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-office-id='$officeIDNum' data-office-region='$officeRegion'  data-office-province='$officeProvince' data-office-cityMunicipality='$officeCityMunicipality' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                              <a class='btn btn-sm btn-danger adminOnly archiveButton' href='#' data-toggle='modal' data-target='#archive' data-office-id='$officeIDNum'>
                                                 <i class='fa fa-archive'></i> Archive
                                              </a>
