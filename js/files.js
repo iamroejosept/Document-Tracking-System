@@ -198,6 +198,19 @@ function getCitiesEdit(province) {
       });
    }); */
 
+   $('#inputDlRegions').on('change', function() {
+       var region = $(this).val();
+       $.ajax({
+          url:"../php/fetchProvinces.php",
+          method:"POST",
+          data:{region:region},
+          dataType:"html", // set the expected data type to HTML
+          success:function(data){
+             $('#dlProvinces').html(data);
+          }
+       });
+    });
+
     $('#inputDlProvince').on('change', function() {
        var province = $(this).val();
        $.ajax({
@@ -342,16 +355,23 @@ function getCitiesEdit(province) {
 
     });
 
+    $('#inputDlRegions').on('input', function () {
+      var inputVal = this.value;
+      var columnIdx = 4; // Index of Province column in the table
+
+      $('#fileDatatable').DataTable().column(columnIdx).search(inputVal).draw();
+   });
+
     $('#inputDlProvince').on('input', function () {
        var inputVal = this.value;
-       var columnIdx = 4; // Index of Province column in the table
+       var columnIdx = 5; // Index of Province column in the table
 
        $('#fileDatatable').DataTable().column(columnIdx).search(inputVal).draw();
     });
 
     $('#inputDlMunicipality').on('input', function () {
        var inputVal = this.value;
-       var columnIdx = 5; // Index of Province column in the table
+       var columnIdx = 6; // Index of Province column in the table
 
        $('#fileDatatable').DataTable().column(columnIdx).search(inputVal).draw();
     });
@@ -367,7 +387,7 @@ function getCitiesEdit(province) {
        function( settings, data, dataIndex ) {
           var min = $("#dateFrom").val();
           var max = $("#dateTo").val();
-          var date = new Date( data[7] );
+          var date = new Date( data[8] );
     
           if (
                 ( min === "" && max === "" ) ||

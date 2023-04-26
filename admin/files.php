@@ -242,21 +242,28 @@
                </div>
                <div class="row mb-2" id="searchFields" style="display: none;">
                   <div class="col-sm-2">
+                        <label class="float-left">Region</label>
+                        <input list="dlRegions" id="inputDlRegions" class="form-control" name="regions">
+                        <datalist id="dlRegions">
+                           <?php 
+                              $searchQuery = "SELECT DISTINCT Region FROM OfficeSettings";  
+                              $searchResult = mysqli_query($connect, $searchQuery);
+
+                              if($searchResult != ''){
+                                    while($rowSearch = mysqli_fetch_array($searchResult)){  
+                                    $searchRegion = $rowSearch['Region'];
+                                                   
+                                    echo "<option value='$searchRegion'>$searchRegion</option>";
+                                 }  
+                              }  
+                           ?>
+                        </datalist>
+                  </div>
+                  <div class="col-sm-2">
                      <label class="float-left">Province</label>
                      <input list="dlProvinces" id="inputDlProvince" class="form-control" name="provinces">
                      <datalist id="dlProvinces">
-                        <?php 
-                           $searchQuery = "SELECT DISTINCT Province FROM OfficeSettings";  
-                           $searchResult = mysqli_query($connect, $searchQuery);
-
-                           if($searchResult != ''){
-                                 while($rowSearch = mysqli_fetch_array($searchResult)){  
-                                 $searchProvince = $rowSearch['Province'];
-                                                
-                                 echo "<option value='$searchProvince'>$searchProvince</option>";
-                              }  
-                           }  
-                        ?>
+               
                      </datalist>
                   </div>
                   <div class="col-sm-2">
