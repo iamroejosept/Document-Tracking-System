@@ -290,6 +290,14 @@
                                       <textarea class="form-control" name="addDescription" placeholder="Description"></textarea>
                                     </div>
                                  </div>
+                                 <div class="col-md-12">
+                                    <div class="form-group">
+                                       <label>Due Date <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="red" class="bi bi-asterisk" viewBox="0 0 16 16">
+                                       <path d="M8 0a1 1 0 0 1 1 1v5.268l4.562-2.634a1 1 0 1 1 1 1.732L10 8l4.562 2.634a1 1 0 1 1-1 1.732L9 9.732V15a1 1 0 1 1-2 0V9.732l-4.562 2.634a1 1 0 1 1-1-1.732L6 8 1.438 5.366a1 1 0 0 1 1-1.732L7 6.268V1a1 1 0 0 1 1-1z"/>
+                                       </svg></label>
+                                       <input type="date" class="form-control" name="addDueDate" required>
+                                    </div>
+                                 </div>
                               </div>
                               <div class="col-md-12" id="addButton">
                                  <button type="submit" class="btn btn-primary"><i
@@ -305,6 +313,7 @@
                            <th>Document Category Name</th>
                            <th>Frequency</th>
                            <th>Description</th>
+                           <th>Due Date</th>
                            <th class="text-center">Action</th>
                         </tr>
                      </thead>
@@ -315,15 +324,23 @@
                                     $DocumentCategoryName = $row['DocumentCategoryName'];
                                     $Frequency = $row['Frequency'];
                                     $Description = $row['Description'];
+                                    $DueDateNumFormat = $row['DueDate'];
                                     $DocumentCategoryId = $row['id_num'];
+                                    $DueDate = "";
+
+                                    if($DueDateNumFormat != ''){
+                                       $dueTimestamp = strtotime($DueDateNumFormat);
+                                       $DueDate = date('F j, Y', $dueTimestamp);
+                                    }
                                     
                                     echo "  
                                     <tr>
                                           <td>$DocumentCategoryName</td>
                                           <td>$Frequency</td>
                                           <td>$Description</td>
+                                          <td>$DueDate</td>
                                           <td class='text-center'>
-                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-category-id='$DocumentCategoryId' data-category-name='$DocumentCategoryName' data-description='$Description' data-frequency='$Frequency' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
+                                             <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-category-id='$DocumentCategoryId' data-category-name='$DocumentCategoryName' data-description='$Description' data-frequency='$Frequency' data-dueDate='$DueDateNumFormat' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                              <a class='btn btn-sm btn-danger adminOnly archiveButton' href='#' data-toggle='modal' data-target='#archive' data-category-id='$DocumentCategoryId'>
                                                 <i class='fa fa-archive'></i> Archive
                                              </a>

@@ -9,6 +9,7 @@ CREATE TABLE DocumentCategory (
   DocumentCategoryName varchar(255) DEFAULT NULL,
   Description varchar(255) DEFAULT NULL,
   Frequency enum("Monthly", "Quarterly", "Daily") DEFAULT NULL,
+  DueDate varchar(255) DEFAULT NULL,
   ArchiveStatus varchar(255) DEFAULT 'Not Archived',
   
   PRIMARY KEY  (id_num)
@@ -76,56 +77,56 @@ INSERT INTO Users (Fullname, Username, Password, Status, AccessLevel) VALUES (
                         'Jane Doe', 'staff', 'xzSH+mfPQkSs', 'Activated', 'Staff');
 
 ## Insert Default Document Categories
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Voters Registration Records', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Inventory of Supplies, ORs, and Cash Books', 'Quarterly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Voters Education / trainings', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'SOCE', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Reports of Election Contributions and Expenditures', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Non-Records (Half-Torn Ballots)', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Minutes of Voting', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Logbook of Certifications / others', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'List of Voters with Voting Records', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'List of Registered Voters', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Internal Communications', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Incoming Communications', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'EDCVL', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'DTRs / OTS', 'Monthly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Data Privacy Reports', 'Monthly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'OT Accomplishment', 'Monthly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Private Practice of COMELEC Lawyers (OEO Baguio City and OEO La Trinidad)', 'Monthly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'RCD and RAAF', 'Monthly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Correspondence (Routine)', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'COA Reports / Inventory', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Certificates of Canvass and Proclamation', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Certificates of Candidacy', '', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Voters Certification Report', 'Quarterly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Voters Education Monitoring Report required by EID', 'Quarterly', '');
-INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description) VALUES (
-                        'Ballot Box Contents', '', '');   
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Voters Registration Records', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Inventory of Supplies, ORs, and Cash Books', 'Quarterly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Voters Education / trainings', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'SOCE', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Reports of Election Contributions and Expenditures', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Non-Records (Half-Torn Ballots)', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Minutes of Voting', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Logbook of Certifications / others', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'List of Voters with Voting Records', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'List of Registered Voters', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Internal Communications', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Incoming Communications', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'EDCVL', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'DTRs / OTS', 'Monthly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Data Privacy Reports', 'Monthly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'OT Accomplishment', 'Monthly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Private Practice of COMELEC Lawyers (OEO Baguio City and OEO La Trinidad)', 'Monthly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'RCD and RAAF', 'Monthly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Correspondence (Routine)', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'COA Reports / Inventory', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Certificates of Canvass and Proclamation', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Certificates of Candidacy', '', '', '');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Voters Certification Report', 'Quarterly', '', '2023-03-31');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Voters Education Monitoring Report required by EID', 'Quarterly', '', '2023-03-28');
+INSERT INTO DocumentCategory (DocumentCategoryName,Frequency, Description, DueDate) VALUES (
+                        'Ballot Box Contents', '', '', '');   
 
 INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Cordillera Administrative Region (CAR)', 'Benguet', 'Atok');
 INSERT INTO OfficeSettings (Region, Province, cityMunicipality) VALUES ('Cordillera Administrative Region (CAR)', 'Benguet', 'Baguio');

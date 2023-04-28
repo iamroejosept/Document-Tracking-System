@@ -29,14 +29,21 @@ if($_POST['target'] == "document"){
     if (empty($_POST['addFrequency'])) {
         $dataValid = false;
     }
+    if (empty($_POST['addDueDate'])) {
+        $dataValid = false;
+    }
 
     if ($dataValid == true) {
         $DCN = mysqli_real_escape_string($conn, $_POST['addDCN']);
         $Description = mysqli_real_escape_string($conn, $_POST['addDescription']);
         $Frequency = mysqli_real_escape_string($conn, $_POST['addFrequency']);
+        $DueDateNumFormat = mysqli_real_escape_string($conn, $_POST['addDueDate']);
+
+        $dueTimestamp = strtotime($DueDateNumFormat);
+        $DueDate = date('F j, Y', $dueTimestamp);
 
         // Build the SQL query to add the category record
-        $sql = "INSERT INTO DocumentCategory (DocumentCategoryName, Description, Frequency) VALUES ('$DCN', '$Description', '$Frequency')";
+        $sql = "INSERT INTO DocumentCategory (DocumentCategoryName, Description, Frequency, DueDate) VALUES ('$DCN', '$Description', '$Frequency', '$DueDateNumFormat')";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -47,7 +54,8 @@ if($_POST['target'] == "document"){
                 'Document Value' => array(
                     'Document Category' => $DCN,
                     'Description' => $Description,
-                    'Frequency' => $Frequency
+                    'Frequency' => $Frequency,
+                    'Due Date' => $DueDate
                 )
             );
 
@@ -237,13 +245,14 @@ if($_POST['target'] == "document"){
         $barcode = mysqli_real_escape_string($conn, $_POST['txtBarcode']);
         $fileDescription = mysqli_real_escape_string($conn, $_POST['fileDescription']);
         $fileLocation = mysqli_real_escape_string($conn, $_POST['fileFileLocation']);
-        $fileDateUploaded = mysqli_real_escape_string($conn, $_POST['fileDate']);
+        $fileDateUploadedNumFormat = mysqli_real_escape_string($conn, $_POST['fileDate']);
         $fileRegion = mysqli_real_escape_string($conn, $_POST['fileRegion']);
         $fileProvince = mysqli_real_escape_string($conn, $_POST['fileProvince']);
         $fileCityMunicipality = mysqli_real_escape_string($conn, $_POST['fileCityMunicipality']);
         $fileRemark = mysqli_real_escape_string($conn, $_POST['fileRemark']);
 
-        $fileDateUploaded = date('Y-m-d', strtotime($fileDateUploaded));
+        $dueTimestamp = strtotime($fileDateUploadedNumFormat);
+        $fileDateUploaded = date('F j, Y', $dueTimestamp);
 
         $query ="SELECT office_id_num FROM OfficeSettings WHERE Region='$fileRegion' AND Province='$fileProvince' AND cityMunicipality='$fileCityMunicipality'";
         $result = mysqli_query($conn, $query);
@@ -263,7 +272,7 @@ if($_POST['target'] == "document"){
 
             if (move_uploaded_file($fileTmpName, $uploadPath)) {
                 // File uploaded successfully, proceed with database insert
-                $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, File, UploadedBy, Date, office_id_num, Remark) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$fileName', '$user_name', '$fileDateUploaded', '$office', '$fileRemark')";
+                $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, File, UploadedBy, Date, office_id_num, Remark) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$fileName', '$user_name', '$fileDateUploadedNumFormat', '$office', '$fileRemark')";
                 $result = mysqli_query($conn, $sql);
 
                 if ($result) {
@@ -307,7 +316,7 @@ if($_POST['target'] == "document"){
             }
         } else {
             // No file uploaded, proceed with database insert without file
-            $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, UploadedBy, Date, office_id_num, Remark) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$user_name', '$fileDateUploaded', '$office', '$fileRemark')";
+            $sql = "INSERT INTO Files (Barcode, Category, Description, FileLocation, UploadedBy, Date, office_id_num, Remark) VALUES ('$barcode', '$fileCategory', '$fileDescription', '$fileLocation', '$user_name', '$fileDateUploadedNumFormat', '$office', '$fileRemark')";
             $result = mysqli_query($conn, $sql);
 
             if ($result) {

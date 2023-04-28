@@ -15,7 +15,8 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>Document Tracking System</title>
+   <title>DOCUTRACE</title>
+   <link rel="icon" href="../asset/img/icon.png" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
@@ -260,7 +261,10 @@
                                        $LogType = $row['LogType'];
                                        $Description = $row['Description'];
                                        $time = $row['time_component'];
-                                       $date = $row['date_component'];
+                                       $dateNumFormat = $row['date_component'];
+
+                                       $dueTimestamp = strtotime($dateNumFormat);
+                                       $date = date('F j, Y', $dueTimestamp);
 
                                        $sql ="SELECT * FROM Users WHERE users_id_num='$User'";  
                                        $result1 = mysqli_query($connect, $sql);

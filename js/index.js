@@ -1,6 +1,10 @@
 $(document).ready(function() {
     const editIconUserButton = document.getElementById('editIconUserButton');
 
+    $(function () {
+      $("#example1").DataTable();
+   });
+
     editIconUserButton.addEventListener('click', function() {
        const disabledElements = document.querySelectorAll('[disabled]');
 

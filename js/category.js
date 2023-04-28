@@ -3,11 +3,13 @@ function populateEditModal(button) {
     var category_name = button.getAttribute('data-category-name');
     var description = button.getAttribute('data-description');
     var frequency = button.getAttribute('data-frequency');
+    var dueDate = button.getAttribute('data-dueDate');
     
     document.getElementById('editTxtDCN').value = category_name;
     document.getElementById('editTADescription').value = description;
     document.getElementById('hiddenId').value = category_id;
     document.getElementById('editFrequency').value = frequency;
+    document.getElementById('editDueDate').value = dueDate;
  }
  
  $(document).ready(function() {
@@ -32,6 +34,7 @@ function populateEditModal(button) {
 
        document.getElementById('editTxtDCN').disabled = true;
        document.getElementById('editTADescription').disabled = true;
+       document.getElementById('editDueDate').disabled = true;
        document.getElementById('editFrequency').disabled = true;
 
     });

@@ -32,12 +32,15 @@ if(isset($_POST['editID'])) {
         $categoryName = mysqli_real_escape_string($conn, $_POST['editDCN']);
         $description = mysqli_real_escape_string($conn, $_POST['editDescription']);
         $frequency = mysqli_real_escape_string($conn, $_POST['editFrequency']);
+        $dueDateNumFormat = mysqli_real_escape_string($conn, $_POST['editDueDate']);
 
         // Get the old file data
         $oldDocumentCategoryData = $functions->getDocumentCategoryData($categoryId, $conn);
+        $dueTimestamp = strtotime($oldDocumentCategoryData['DueDate']);
+        $oldDueDate = date('F j, Y', $dueTimestamp);
         
         // Build the SQL query to update the category record
-        $sql = "UPDATE DocumentCategory SET DocumentCategoryName = '$categoryName', Description = '$description', Frequency = '$frequency' WHERE id_num = '$categoryId'";
+        $sql = "UPDATE DocumentCategory SET DocumentCategoryName = '$categoryName', Description = '$description', Frequency = '$frequency', DueDate = '$dueDateNumFormat' WHERE id_num = '$categoryId'";
         
         // Execute the query
         if(mysqli_query($conn, $sql)) {
@@ -46,18 +49,23 @@ if(isset($_POST['editID'])) {
 
             // Get the new file data
             $newDocumentCategoryData = $functions->getDocumentCategoryData($categoryId, $conn);
+            $dueTimestamp = strtotime($newDocumentCategoryData['DueDate']);
+            $newDueDate = date('F j, Y', $dueTimestamp);
+            
 
             // Put the old and new file data in an array
             $DocumentCategoryData = array(
                 'Old Value' => array(
                     'Document Category' => $oldDocumentCategoryData['DocumentCategoryName'],
                     'Description' => $oldDocumentCategoryData['Description'],
-                    'Frequency' => $oldDocumentCategoryData['Frequency']
+                    'Frequency' => $oldDocumentCategoryData['Frequency'],
+                    'Due Date' => $oldDueDate
                 ),
                 'New Value' => array(
                     'Document Category' => $newDocumentCategoryData['DocumentCategoryName'],
                     'Description' => $newDocumentCategoryData['Description'],
-                    'Frequency' => $newDocumentCategoryData['Frequency']
+                    'Frequency' => $newDocumentCategoryData['Frequency'],
+                    'Due Date' => $newDueDate
                 )
             );
 
@@ -268,13 +276,11 @@ if(isset($_POST['editID'])) {
         $editBarcode = mysqli_real_escape_string($conn, $_POST['nameEditBarcode']);
         $editDescription = mysqli_real_escape_string($conn, $_POST['nameEditDescription']);
         $editFileLocation = mysqli_real_escape_string($conn, $_POST['nameEditFileLocation']);
-        $editDateUploaded = mysqli_real_escape_string($conn, $_POST['nameEditDateUploaded']);
+        $editDateUploadedNumFormat = mysqli_real_escape_string($conn, $_POST['nameEditDateUploaded']);
         $editRegion = mysqli_real_escape_string($conn, $_POST['namefileRegion']);
         $editProvince = mysqli_real_escape_string($conn, $_POST['namefileProvince']);
         $editCityMunicipality = mysqli_real_escape_string($conn, $_POST['namefileCityMunicipality']);
         $editRemark = mysqli_real_escape_string($conn, $_POST['nameEditRemark']);
-
-        $editDateUploaded = date('Y-m-d', strtotime($editDateUploaded));
 
         $query ="SELECT office_id_num FROM OfficeSettings WHERE Region='$editRegion' AND Province='$editProvince' AND cityMunicipality='$editCityMunicipality'";
         $result = mysqli_query($conn, $query);
@@ -287,6 +293,8 @@ if(isset($_POST['editID'])) {
         if($_FILES['nameEditInputFile']['name'] == null){
             // Get the old file data
             $oldFileData = $functions->getFileData($editID, $conn);
+            $dueTimestamp = strtotime($oldFileData['Date']);
+            $oldDateUploaded = date('F j, Y', $dueTimestamp);
 
             $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
             $result = mysqli_query($conn, $query);
@@ -302,7 +310,7 @@ if(isset($_POST['editID'])) {
             }
 
             // Build the SQL query to update the category record
-            $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
+            $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploadedNumFormat', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
             
             // Execute the query
             if(mysqli_query($conn, $sql)) {
@@ -311,6 +319,8 @@ if(isset($_POST['editID'])) {
 
                 // Get the new file data
                 $newFileData = $functions->getFileData($editID, $conn);
+                $dueTimestamp = strtotime($newFileData['Date']);
+                $newDateUploaded = date('F j, Y', $dueTimestamp);
 
                 $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
                 $result = mysqli_query($conn, $query);
@@ -334,7 +344,7 @@ if(isset($_POST['editID'])) {
                         'Region' => $oldRegion,
                         'Province' => $oldProvince,
                         'City / Municipality' => $oldCityMunicipality,
-                        'Date Uploaded' => $oldFileData['Date'],
+                        'Date Uploaded' => $oldDateUploaded,
                         'Description' => $oldFileData['Description'],
                         'File Location' => $oldFileData['FileLocation'],
                         'Remark' => $oldFileData['Remark']
@@ -346,7 +356,7 @@ if(isset($_POST['editID'])) {
                         'Region' => $newRegion,
                         'Province' => $newProvince,
                         'City / Municipality' => $newCityMunicipality,
-                        'Date Uploaded' => $newFileData['Date'],
+                        'Date Uploaded' => $newDateUploaded,
                         'Description' => $newFileData['Description'],
                         'File Location' => $newFileData['FileLocation'],
                         'Remark' => $newFileData['Remark']
@@ -378,6 +388,8 @@ if(isset($_POST['editID'])) {
 
             // Get the old file data
             $oldFileData = $functions->getFileData($editID, $conn);
+            $dueTimestamp = strtotime($oldFileData['Date']);
+            $oldDateUploaded = date('F j, Y', $dueTimestamp);
 
             $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$oldFileData['office_id_num']}'";
             $result = mysqli_query($conn, $query);
@@ -403,7 +415,7 @@ if(isset($_POST['editID'])) {
 
             if (move_uploaded_file($fileTmpName, $uploadPath)) {
                 // Build the SQL query to update the category record
-                $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', File = '$fileName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploaded', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
+                $sql = "UPDATE Files SET Barcode = '$editBarcode', Category = '$editCategoryName', File = '$fileName', Description = '$editDescription', FileLocation = '$editFileLocation', Date = '$editDateUploadedNumFormat', office_id_num = '$office', Remark = '$editRemark', UploadedBy = '$user_name' WHERE id_num = '$editID'";
                 
                 // Execute the query
                 if(mysqli_query($conn, $sql)) {
@@ -412,8 +424,10 @@ if(isset($_POST['editID'])) {
 
                     // Get the new file data
                     $newFileData = $functions->getFileData($editID, $conn);
+                    $dueTimestamp = strtotime($newFileData['Date']);
+                    $newDateUploaded = date('F j, Y', $dueTimestamp);
 
-                    $query = "SELECT Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
+                    $query = "SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='{$newFileData['office_id_num']}'";
                     $result = mysqli_query($conn, $query);
                     $newRegion;
                     $newProvince;
@@ -435,7 +449,7 @@ if(isset($_POST['editID'])) {
                             'Region' => $oldRegion,
                             'Province' => $oldProvince,
                             'City / Municipality' => $oldCityMunicipality,
-                            'Date Uploaded' => $oldFileData['Date'],
+                            'Date Uploaded' => $oldDateUploaded,
                             'Description' => $oldFileData['Description'],
                             'File Location' => $oldFileData['FileLocation'],
                             'Remark' => $oldFileData['Remark']
@@ -447,7 +461,7 @@ if(isset($_POST['editID'])) {
                             'Region' => $newRegion,
                             'Province' => $newProvince,
                             'City / Municipality' => $newCityMunicipality,
-                            'Date Uploaded' => $newFileData['Date'],
+                            'Date Uploaded' => $newDateUploaded,
                             'Description' => $newFileData['Description'],
                             'File Location' => $newFileData['FileLocation'],
                             'Remark' => $newFileData['Remark']

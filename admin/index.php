@@ -1,10 +1,11 @@
 <?php  
    require '../php/centralConnection.php';
+
    session_start();
+
    if(empty($_SESSION['logged_in'])){
       header('Location: ../index.html');
    } 
-
 ?>  
 
 <!DOCTYPE html>
@@ -234,11 +235,6 @@
                   <div class="col-sm-6">
                      <h1 class="m-0">Dashboard</h1>
                   </div>
-                  <div class="col-sm-6">
-                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active">Dashboard</li>
-                     </ol>
-                  </div>
                </div>
             </div>
          </div>
@@ -349,6 +345,105 @@
                      </div>
                   </div>
                </div>
+               <br>
+               <div class="container-fluid">
+                  <div class="row mb-2">
+                     <div class="col-sm-6">
+                        <h3 class="m-0">File Remarks</h3>
+                     </div>
+                  </div>
+               </div>
+               <div class="card card-info">
+                  <br>
+                  <div class="col-md-12">
+                     <table id="example1" class="table">
+                        <thead class="btn-cancel">
+                           <tr>
+                              <th>Remark</th>
+                              <th>File Name</th>
+                              <th>Barcode</th>
+                              <th>Office</th>
+                              <th>Due Date</th>
+                              <th class="text-center">Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <?php        
+                           $query ="SELECT * FROM Files WHERE ArchiveStatus != 'Archived'";  
+                           $result = mysqli_query($connect, $query);
+
+                                 if($result != ''){
+                                    while($row = mysqli_fetch_array($result)){  
+                                       $Remark = $row['Remark'];
+                                       $File = $row['File'];
+                                       $Barcode = $row['Barcode'];
+                                       $Office = "";
+                                       $DueDate = "";
+                                       $Category = $row['Category'];
+                                       $office_ID = $row['office_id_num'];
+                                       $file_id_num = $row['id_num'];
+                                       $current_date = date('Y-m-d');
+
+                                       $sql ="SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
+                                       $result1 = mysqli_query($connect, $sql);
+
+                                       if($result1){
+                                          $row1 = mysqli_fetch_assoc($result1);
+                                          $Office = $row1['Region'] . ", " . $row1['Province']. ", " . $row1['cityMunicipality'];
+                                       }
+
+                                       $sql ="SELECT * FROM DocumentCategory WHERE DocumentCategoryName='$Category'";  
+                                       $result2 = mysqli_query($connect, $sql);
+
+                                       if($result2){
+                                          $row2 = mysqli_fetch_assoc($result2);
+                                          $DueDateNumFormat=$row2['DueDate'];
+
+                                          if($DueDateNumFormat != ''){
+                                             $dueTimestamp = strtotime($DueDateNumFormat);
+                                             $DueDate = date('F j, Y', $dueTimestamp);
+                                          }
+                                       }
+                                       
+                                       if($current_date < $DueDateNumFormat || $Remark == "Submitted" || $DueDateNumFormat == ""){
+                                          echo "  
+                                          <tr>
+                                                <td><span class='badge bg-success'>$Remark</td>   
+                                                <td>$File</td>
+                                                <td>$Barcode</td>
+                                                <td>$Office</td>
+                                                <td>$DueDate</td>                                               
+                                                <td class='text-center'>
+                                                   <a class='btn btn-sm btn-success' href='../php/changeRemark.php?id=$file_id_num&remark=$Remark'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-repeat' viewBox='0 0 16 16'>
+                                                   <path d='M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z'/>
+                                                   <path fill-rule='evenodd' d='M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z'/>
+                                                 </svg> Change Remark</a>
+                                                </td>
+                                          </tr>";
+                                       }else{
+                                          echo "  
+                                          <tr>
+                                                <td><span class='badge bg-danger'>$Remark</td>   
+                                                <td>$File</td>
+                                                <td>$Barcode</td>
+                                                <td>$Office</td>
+                                                <td>$DueDate</td>                                               
+                                                <td class='text-center'>
+                                                   <a class='btn btn-sm btn-success' href='../php/changeRemark.php?id=$file_id_num&remark=$Remark'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-repeat' viewBox='0 0 16 16'>
+                                                   <path d='M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z'/>
+                                                   <path fill-rule='evenodd' d='M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z'/>
+                                                 </svg> Change Remark</a>
+                                                </td>
+                                          </tr>";
+                                       }
+                                       
+                                    }  
+                                 }  
+                           ?>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
             </div>
          </section>
       </div>
@@ -365,6 +460,8 @@
          </script>";
       }
    ?>
+
+  
 </body>
 
 </html>

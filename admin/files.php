@@ -342,7 +342,7 @@
                                     $FileLocation = $row['FileLocation'];
                                     $File = $row['File'];
                                     $UploadedBy = $row['UploadedBy'];
-                                    $Date = $row['Date'];
+                                    $DateNumFormat = $row['Date'];
                                     $office_ID = $row['office_id_num'];
                                     $Remark = $row['Remark'];
                                     $office_region="";
@@ -350,6 +350,9 @@
                                     $office_cityMunicipality="";
                                     $icon = '';
                                     $frequency = '';
+
+                                    $dueTimestamp = strtotime($DateNumFormat);
+                                    $Date = date('F j, Y', $dueTimestamp);
 
                                     $sql ="SELECT Region, Province, cityMunicipality FROM OfficeSettings WHERE office_id_num='$office_ID'";  
                                     $result1 = mysqli_query($connect, $sql);
@@ -405,7 +408,7 @@
                                           <td>$Remark</td>
                                           <td class='text-center'>
                                              <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-file-id='$FileId' data-file='$File' data-file-category='$Category' data-file-barcode='$Barcode' data-file-frequency='$frequency' data-file-description='$Description' data-file-fileLocation='$FileLocation' 
-                                             data-file-dateUploaded='$Date' 
+                                             data-file-dateUploaded='$DateNumFormat' 
                                              data-file-uploadedBy='$UploadedBy' 
                                              data-office-region='$office_region' data-office-province='$office_province' data-office-cityMunicipality='$office_cityMunicipality'
                                              data-file-remark='$Remark' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
