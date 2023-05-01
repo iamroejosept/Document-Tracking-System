@@ -1,6 +1,6 @@
-function togglePasswordVisibility() {
-    const passwordField = document.getElementById("TxtPassword");
-    const eyeIcon = document.getElementById("eye-icon");
+function togglePasswordVisibility(textboxID, eyeID) {
+    const passwordField = document.getElementById(textboxID);
+    const eyeIcon = document.getElementById(eyeID);
   
     if (passwordField.type === "password") {
       passwordField.type = "text";

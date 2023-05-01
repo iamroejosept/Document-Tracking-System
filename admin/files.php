@@ -41,6 +41,7 @@
    <link rel="stylesheet" href="../asset/jquery-confirm.min.css">
    <script src="../asset/jquery-confirm.min.js"></script>
    <script src="../js/files.js"></script>
+   <script src="../js/Login.js"></script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
    <div class="wrapper">

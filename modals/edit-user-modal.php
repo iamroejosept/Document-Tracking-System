@@ -10,6 +10,23 @@
                               <h5>User Information</h5>
                            </div>
                            <div class="row">
+                              <div class="col-md-12" id="edit-parent-picture-container">
+                                 <a href="#" target="_blank" id="anchorEditPictureContainer">
+                                    <div id="edit-picture-container">
+                                    </div>
+                                 </a>
+                              </div>
+                              <div class="col-md-12">
+                                    <div class="form-group">
+                                       <label  class="float-left">Profile Picture</label>
+                                       <div class="input-group">
+                                          <div class="custom-file">
+                                             <input type="file" class="custom-file-input" name="editProfilePicture" id="editProfilePicture" disabled>
+                                             <label class="custom-file-label" id="editlabelProfilePicture" for="editProfilePicture">Choose picture</label>
+                                          </div>
+                                       </div>
+                                    </div>
+                              </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Full Name</label>
@@ -43,13 +60,27 @@
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Password</label>
-                                    <input type="password" class="form-control" id="idEditUserPassword" name="nameEditUserPassword" placeholder="**********" disabled>
+                                    <div class="input-group">
+                                       <input type="password" class="form-control" id="idEditUserPassword" name="nameEditUserPassword" placeholder="**********" disabled>
+                                       <div class="input-group-append">
+                                          <div class="input-group-text eyeHolder" id="eyeHolder" style="pointer-events: none; background-color: #E9ECEF;">
+                                             <span id="eye-icon3" class="fas fa-eye" onclick="togglePasswordVisibility('idEditUserPassword', 'eye-icon3')"></span>
+                                          </div>
+                                       </div>
+                                    </div>
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Confirm Password</label>
-                                    <input type="password" class="form-control" name="nameEditUserConfirmPassword" id="idEditUserConfirmPassword" placeholder="**********" disabled>
+                                    <div class="input-group">
+                                       <input type="password" class="form-control" name="nameEditUserConfirmPassword" id="idEditUserConfirmPassword" placeholder="**********" disabled>
+                                       <div class="input-group-append">
+                                          <div class="input-group-text eyeHolder" id="eyeHolder" style="pointer-events: none; background-color: #E9ECEF;">
+                                             <span id="eye-icon4" class="fas fa-eye" onclick="togglePasswordVisibility('idEditUserConfirmPassword', 'eye-icon4')"></span>
+                                          </div>
+                                       </div>
+                                 </div>
                                  </div>
                               </div>
                            </div>

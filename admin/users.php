@@ -43,6 +43,7 @@
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../js/users.js"></script>
+   <script src="../js/Login.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -255,9 +256,10 @@
                <div class="card card-info">
                   <br>
                   <div class="col-md-12">
-                     <table id="example1" class="table">
+                     <table id="example1" class="table userTable">
                         <thead class="btn-cancel">
                            <tr>
+                              <th>Profile Picture</th>
                               <th>Full Name</th>
                               <th>Access Level</th>
                               <th>Account</th>
@@ -269,6 +271,7 @@
                            <?php        
                                  if($result != ''){
                                     while($row = mysqli_fetch_array($result)){  
+                                       $ProfilePic = basename($row['ProfilePic']);
                                        $Fullname = $row['Fullname'];
                                        $UserID = $row['users_id_num'];
                                        $Username = $row['Username'];
@@ -279,6 +282,7 @@
                                        if($Status == "Activated"){
                                           echo "  
                                           <tr>
+                                                <td class='parentProfileTable'><a href='../asset/img/profile-picture/$ProfilePic' target='_blank'><img src='../asset/img/profile-picture/$ProfilePic' width='75' height='75' alt='Profile Picture' class='profileTable'></a></td> 
                                                 <td>$Fullname</td>   
                                                 <td>$AccessLevel</td>
                                                 <td>
@@ -291,7 +295,7 @@
                                                 </td>
                                                 <td><span class='badge bg-success'>$Status</td>
                                                 <td class='text-center'>
-                                                   <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-user-id='$UserID' data-fullname='$Fullname' data-username='$Username' data-password='$Password' data-access-level='$AccessLevel' data-status='$Status' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
+                                                   <a class='btn btn-sm btn-success' href='#' data-toggle='modal' data-target='#edit' data-user-id='$UserID' data-user-profile='$ProfilePic' data-fullname='$Fullname' data-username='$Username' data-password='$Password' data-access-level='$AccessLevel' data-status='$Status' onclick='populateEditModal(this)'><i class='fa fa-search'></i> View</a>
                                                    <a class='btn btn-sm btn-danger archiveButton' href='#' data-toggle='modal' data-target='#archive' data-user-id='$UserID'>
                                                       <i class='fa fa-archive'></i> Archive
                                                    </a>
@@ -306,6 +310,7 @@
                                        }else{
                                           echo "  
                                           <tr>
+                                                <td class='parentProfileTable'><img src='../asset/img/profile-picture/$ProfilePic' width='75' height='75' alt='Profile Picture' class='profileTable'></td> 
                                                 <td>$Fullname</td>   
                                                 <td>$AccessLevel</td>
                                                 <td>

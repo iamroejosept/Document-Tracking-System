@@ -12,6 +12,9 @@ $(document).ready(function() {
          element.removeAttribute('disabled');
       });
 
+      $('.eyeHolder').css('background-color', 'white');
+      $('.eyeHolder').css('pointer-events', 'auto');
+
       document.getElementById('editIconUserButton').style.display = 'none';
       document.getElementById('saveIconUserButton').style.display = 'inline-block';
 
@@ -27,6 +30,18 @@ $(document).ready(function() {
       document.getElementById('idEditIconUserPassword').disabled = true;
       document.getElementById('idEditIconUserConfirmPassword').disabled = true;
       document.getElementById('idEditIconUserAccessLevel').disabled = true;
+      document.getElementById('editIconProfilePicture').disabled = true;
+
+      $('.eyeHolder').css('background-color', '#E9ECEF');
+      $('.eyeHolder').css('pointer-events', 'none');
+      document.getElementById('eye-icon-nav1').classList.remove("fa-eye-slash");
+      document.getElementById('eye-icon-nav2').classList.remove("fa-eye-slash");
+      document.getElementById('eye-icon-nav1').classList.remove("fa-eye");
+      document.getElementById('eye-icon-nav2').classList.remove("fa-eye");
+      document.getElementById('eye-icon-nav1').classList.add("fa-eye");
+      document.getElementById('eye-icon-nav2').classList.add("fa-eye");
+      document.getElementById('idEditIconUserPassword').type = "password";
+      document.getElementById('idEditIconUserConfirmPassword').type = "password";
 
    });
 

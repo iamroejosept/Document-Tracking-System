@@ -35,6 +35,7 @@ CREATE TABLE Files (
 ## Create Users table
 CREATE TABLE Users (
   users_id_num int(50) unsigned ZEROFILL auto_increment,
+  ProfilePic varchar(255) DEFAULT 'default-profile.png',
   Fullname varchar(255) DEFAULT NULL,
   Username varchar(255) DEFAULT NULL,
   Password varchar(255) DEFAULT NULL,

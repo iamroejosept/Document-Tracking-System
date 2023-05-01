@@ -1,10 +1,13 @@
 function populateEditModal(button) {
     var user_id = button.getAttribute('data-user-id');
+    var user_profile = button.getAttribute('data-user-profile');
     var fullname = button.getAttribute('data-fullname');
     var username = button.getAttribute('data-username');
     var password= button.getAttribute('data-password');
     var access_level = button.getAttribute('data-access-level');
     var status = button.getAttribute('data-status');
+
+    var user_profile_full_path = "../asset/img/profile-picture/" + user_profile;
     
     document.getElementById('idEditUserFullName').value = fullname;
     document.getElementById('idEditUserAccessLevel').value = access_level;
@@ -13,7 +16,9 @@ function populateEditModal(button) {
     document.getElementById('idEditUserConfirmPassword').value = password;
     document.getElementById('hiddenId').value = user_id;
     document.getElementById('idEditUserStatus').value = status;
-
+    document.getElementById('edit-picture-container').style.backgroundImage = `url(${user_profile_full_path})`;
+    $('#editlabelProfilePicture').text(user_profile);
+    document.getElementById('anchorEditPictureContainer').href = user_profile_full_path;
  }
 
 $(document).ready(function() {
@@ -24,8 +29,13 @@ $(document).ready(function() {
     const disabledElements = document.querySelectorAll('[disabled]');
 
     disabledElements.forEach((element) => {
-       element.removeAttribute('disabled');
+      if (!document.getElementById('editIconUser').contains(element)) {
+        element.removeAttribute('disabled');
+      }
     });
+
+    $('.eyeHolder').css('background-color', 'white');
+    $('.eyeHolder').css('pointer-events', 'auto');
 
     document.getElementById('editButton').style.display = 'none';
     document.getElementById('saveButton').style.display = 'inline-block';
@@ -42,6 +52,18 @@ $(document).ready(function() {
     document.getElementById('idEditUserStatus').disabled = true;
     document.getElementById('idEditUserPassword').disabled = true;
     document.getElementById('idEditUserConfirmPassword').disabled = true;
+    document.getElementById('editProfilePicture').disabled = true;
+
+    $('.eyeHolder').css('background-color', '#E9ECEF');
+    $('.eyeHolder').css('pointer-events', 'none');
+    document.getElementById('eye-icon3').classList.remove("fa-eye-slash");
+      document.getElementById('eye-icon4').classList.remove("fa-eye-slash");
+      document.getElementById('eye-icon3').classList.remove("fa-eye");
+      document.getElementById('eye-icon4').classList.remove("fa-eye");
+      document.getElementById('eye-icon3').classList.add("fa-eye");
+      document.getElementById('eye-icon4').classList.add("fa-eye");
+      document.getElementById('idEditUserPassword').type = "password";
+      document.getElementById('idEditUserConfirmPassword').type = "password";
 
  });
 
@@ -49,8 +71,13 @@ $(document).ready(function() {
     const disabledElements = document.querySelectorAll('[disabled]');
 
     disabledElements.forEach((element) => {
-       element.removeAttribute('disabled');
+      if (!document.getElementById('edit').contains(element)) {
+        element.removeAttribute('disabled');
+      }
     });
+
+    $('.eyeHolder').css('background-color', 'white');
+    $('.eyeHolder').css('pointer-events', 'auto');
 
     document.getElementById('editIconUserButton').style.display = 'none';
     document.getElementById('saveIconUserButton').style.display = 'inline-block';
@@ -67,12 +94,60 @@ $(document).ready(function() {
     document.getElementById('idEditIconUserPassword').disabled = true;
     document.getElementById('idEditIconUserConfirmPassword').disabled = true;
     document.getElementById('idEditIconUserAccessLevel').disabled = true;
+    document.getElementById('editIconProfilePicture').disabled = true;
+
+    $('.eyeHolder').css('background-color', '#E9ECEF');
+    $('.eyeHolder').css('pointer-events', 'none');
+    document.getElementById('eye-icon-nav1').classList.remove("fa-eye-slash");
+      document.getElementById('eye-icon-nav2').classList.remove("fa-eye-slash");
+      document.getElementById('eye-icon-nav1').classList.remove("fa-eye");
+      document.getElementById('eye-icon-nav2').classList.remove("fa-eye");
+      document.getElementById('eye-icon-nav1').classList.add("fa-eye");
+      document.getElementById('eye-icon-nav2').classList.add("fa-eye");
+      document.getElementById('idEditIconUserPassword').type = "password";
+      document.getElementById('idEditIconUserConfirmPassword').type = "password";
 
  });
 
  $(function () {
     $("#example1").DataTable();
  });
+
+ // Update the label of the custom file input with the name of the selected file
+ $('#profilePicture').on('change', function() {
+   // Get the name of the selected file
+   var profileName = $(this).val().split('\\').pop();
+   // Update the label with the name of the file
+   $('#labelProfilePicture').text(profileName);
+
+   const file = this.files[0];
+   const reader = new FileReader();
+
+   reader.addEventListener('load', () => {
+      $('#picture-container').css('background-image', `url(${reader.result})`);
+      const url = URL.createObjectURL(file); // Create temporary URL
+      $('#anchorPictureContainer').attr('href', url)
+   });
+
+   reader.readAsDataURL(file);
+});
+
+// Update the label of the custom file input with the name of the selected file
+$('#editProfilePicture').on('change', function() {
+   // Get the name of the selected file
+   var profileName = $(this).val().split('\\').pop();
+   // Update the label with the name of the file
+   $('#editlabelProfilePicture').text(profileName);
+
+   const file = this.files[0];
+   const reader = new FileReader();
+
+   reader.addEventListener('load', () => {
+      $('#edit-picture-container').css('background-image', `url(${reader.result})`);
+   });
+
+   reader.readAsDataURL(file);
+});
 
  //Function for updating user record
  $('#editUserForm').submit(function(event) {

@@ -147,126 +147,272 @@ if(isset($_POST['editID'])) {
         $editStatus = mysqli_real_escape_string($conn, $_POST['nameEditUserStatus']);
         $editPassword = mysqli_real_escape_string($conn, $_POST['nameEditUserPassword']);
 
-        $query ="SELECT * FROM Users";  
+        $query ="SELECT * FROM Users WHERE users_id_num = '$editID'";  
         $result = mysqli_query($connect, $query);
         $row = mysqli_fetch_array($result);
-        if($row['Password'] == $editPassword){
-            // Get the old file data
-            $oldUserData = $functions->getUsersData($editID, $conn);
 
-            // Build the SQL query to update the category record
-            $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$editPassword', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
-            
-            // Execute the query
-            if(mysqli_query($conn, $sql)) {
-                $message = "User updated successfully";
-                $status = "success";
-
-                // Get the new file data
-                $newUserData = $functions->getUsersData($editID, $conn);
-
-                // Put the old and new file data in an array
-                $UserData = array(
-                    'Old Value' => array(
-                        'Full Name' => $oldUserData['Fullname'],
-                        'Username' => $oldUserData['Username'],
-                        'Access Level' => $oldUserData['AccessLevel'],
-                        'Status' => $oldUserData['Status']
-                    ),
-                    'New Value' => array(
-                        'Full Name' => $newUserData['Fullname'],
-                        'Username' => $newUserData['Username'],
-                        'Access Level' => $newUserData['AccessLevel'],
-                        'Status' => $newUserData['Status']
-                    )
-                );
-
-                // Construct the description of the change
-                $description = "Commited a User: <br>";
-                foreach ($UserData['Old Value'] as $key => $oldValue) {
-                    $newValue = $UserData['New Value'][$key];
-                    $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+        if($_FILES['editProfilePicture']['name'] == null){
+            if($row['Password'] == $editPassword){
+                // Get the old file data
+                $oldUserData = $functions->getUsersData($editID, $conn);
+    
+                // Build the SQL query to update the category record
+                $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$editPassword', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
+                
+                // Execute the query
+                if(mysqli_query($conn, $sql)) {
+                    $message = "User updated successfully";
+                    $status = "success";
+    
+                    // Get the new file data
+                    $newUserData = $functions->getUsersData($editID, $conn);
+    
+                    // Put the old and new file data in an array
+                    $UserData = array(
+                        'Old Value' => array(
+                            'Full Name' => $oldUserData['Fullname'],
+                            'Username' => $oldUserData['Username'],
+                            'Access Level' => $oldUserData['AccessLevel'],
+                            'Status' => $oldUserData['Status']
+                        ),
+                        'New Value' => array(
+                            'Full Name' => $newUserData['Fullname'],
+                            'Username' => $newUserData['Username'],
+                            'Access Level' => $newUserData['AccessLevel'],
+                            'Status' => $newUserData['Status']
+                        )
+                    );
+    
+                    // Construct the description of the change
+                    $description = "Commited a User: <br>";
+                    foreach ($UserData['Old Value'] as $key => $oldValue) {
+                        $newValue = $UserData['New Value'][$key];
+                        $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                    }
+    
+                    $currentDateTime = date('Y-m-d H:i A');
+    
+                    //Code for the logs
+                    $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+    
+                    mysqli_query($conn, $sql_logs);
+                } else {
+                    $message = "Error updating user";
+                    $status = "error";
                 }
-
-                $currentDateTime = date('Y-m-d H:i A');
-
-                //Code for the logs
-                $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
-
-                mysqli_query($conn, $sql_logs);
-            } else {
-                $message = "Error updating user";
-                $status = "error";
+            }else{
+                //Encrypt the password
+                // Store a string into the variable which need to be Encrypted
+                $simple_string = $editPassword;
+                
+                // Store the cipher method
+                $ciphering = "AES-128-CTR";
+    
+                // Use OpenSSl Encryption method
+                $iv_length = openssl_cipher_iv_length($ciphering);
+                $options = 0;
+    
+                // Non-NULL Initialization Vector for encryption
+                $encryption_iv = '1234567891011121';
+    
+                // Store the encryption key
+                $encryption_key = "DocumentTrackingSystem";
+    
+                // Use openssl_encrypt() function to encrypt the data
+                $encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
+    
+                // Get the old file data
+                $oldUserData = $functions->getUsersData($editID, $conn);
+    
+                // Build the SQL query to update the category record
+                $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$encryption', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
+                
+                // Execute the query
+                if(mysqli_query($conn, $sql)) {
+                    $message = "User updated successfully";
+                    $status = "success";
+    
+                    // Get the new file data
+                    $newUserData = $functions->getUsersData($editID, $conn);
+    
+                    // Put the old and new file data in an array
+                    $UserData = array(
+                        'Old Value' => array(
+                            'Full Name' => $oldUserData['Fullname'],
+                            'Username' => $oldUserData['Username'],
+                            'Access Level' => $oldUserData['AccessLevel'],
+                            'Status' => $oldUserData['Status']
+                        ),
+                        'New Value' => array(
+                            'Full Name' => $newUserData['Fullname'],
+                            'Username' => $newUserData['Username'],
+                            'Access Level' => $newUserData['AccessLevel'],
+                            'Status' => $newUserData['Status']
+                        )
+                    );
+    
+                    // Construct the description of the change
+                    $description = "Commited a User: <br>";
+                    foreach ($UserData['Old Value'] as $key => $oldValue) {
+                        $newValue = $UserData['New Value'][$key];
+                        $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                    }
+    
+                    $currentDateTime = date('Y-m-d H:i A');
+    
+                    //Code for the logs
+                    $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+    
+                    mysqli_query($conn, $sql_logs);
+                } else {
+                    $message = "Error updating user";
+                    $status = "error";
+                }
             }
         }else{
-            //Encrypt the password
-            // Store a string into the variable which need to be Encrypted
-            $simple_string = $editPassword;
-            
-            // Store the cipher method
-            $ciphering = "AES-128-CTR";
+            $profileName = $_FILES['editProfilePicture']['name'];
+            $profileTmpName = $_FILES['editProfilePicture']['tmp_name']; // Temporary file path
+            $uploadDir = '../asset/img/profile-picture/'; // Upload directory
+            $uploadPath = $uploadDir . basename($profileName);
 
-            // Use OpenSSl Encryption method
-            $iv_length = openssl_cipher_iv_length($ciphering);
-            $options = 0;
+            //Delete the old file
+            $sqlDelete = "SELECT * FROM Users WHERE users_id_num = '$editID'";
+            $resultDelete = mysqli_query($connect, $sqlDelete);
+            $rowDelete = mysqli_fetch_array($resultDelete);
+            if (!empty($rowDelete['ProfilePic']) && $rowDelete['ProfilePic'] != "default-profile.png") {
+                $profile_path = '../asset/img/profile-picture/'.$rowDelete['ProfilePic'];
+                unlink($profile_path);
+            }
 
-            // Non-NULL Initialization Vector for encryption
-            $encryption_iv = '1234567891011121';
-
-            // Store the encryption key
-            $encryption_key = "DocumentTrackingSystem";
-
-            // Use openssl_encrypt() function to encrypt the data
-            $encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
-
-            // Get the old file data
-            $oldUserData = $functions->getUsersData($editID, $conn);
-
-            // Build the SQL query to update the category record
-            $sql = "UPDATE Users SET Fullname = '$editFullname', Username = '$editUsername', Password = '$encryption', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
-            
-            // Execute the query
-            if(mysqli_query($conn, $sql)) {
-                $message = "User updated successfully";
-                $status = "success";
-
-                // Get the new file data
-                $newUserData = $functions->getUsersData($editID, $conn);
-
-                // Put the old and new file data in an array
-                $UserData = array(
-                    'Old Value' => array(
-                        'Full Name' => $oldUserData['Fullname'],
-                        'Username' => $oldUserData['Username'],
-                        'Access Level' => $oldUserData['AccessLevel'],
-                        'Status' => $oldUserData['Status']
-                    ),
-                    'New Value' => array(
-                        'Full Name' => $newUserData['Fullname'],
-                        'Username' => $newUserData['Username'],
-                        'Access Level' => $newUserData['AccessLevel'],
-                        'Status' => $newUserData['Status']
-                    )
-                );
-
-                // Construct the description of the change
-                $description = "Commited a User: <br>";
-                foreach ($UserData['Old Value'] as $key => $oldValue) {
-                    $newValue = $UserData['New Value'][$key];
-                    $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+            if(move_uploaded_file($profileTmpName, $uploadPath)){
+                if($row['Password'] == $editPassword){
+                    // Get the old file data
+                    $oldUserData = $functions->getUsersData($editID, $conn);
+        
+                    // Build the SQL query to update the category record
+                    $sql = "UPDATE Users SET ProfilePic = '$profileName', Fullname = '$editFullname', Username = '$editUsername', Password = '$editPassword', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
+                    
+                    // Execute the query
+                    if(mysqli_query($conn, $sql)) {
+                        $message = "User updated successfully";
+                        $status = "success";
+        
+                        // Get the new file data
+                        $newUserData = $functions->getUsersData($editID, $conn);
+        
+                        // Put the old and new file data in an array
+                        $UserData = array(
+                            'Old Value' => array(
+                                'Profile Picture' => $oldUserData['ProfilePic'],
+                                'Full Name' => $oldUserData['Fullname'],
+                                'Username' => $oldUserData['Username'],
+                                'Access Level' => $oldUserData['AccessLevel'],
+                                'Status' => $oldUserData['Status']
+                            ),
+                            'New Value' => array(
+                                'Profile Picture' => $newUserData['ProfilePic'],
+                                'Full Name' => $newUserData['Fullname'],
+                                'Username' => $newUserData['Username'],
+                                'Access Level' => $newUserData['AccessLevel'],
+                                'Status' => $newUserData['Status']
+                            )
+                        );
+        
+                        // Construct the description of the change
+                        $description = "Commited a User: <br>";
+                        foreach ($UserData['Old Value'] as $key => $oldValue) {
+                            $newValue = $UserData['New Value'][$key];
+                            $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                        }
+        
+                        $currentDateTime = date('Y-m-d H:i A');
+        
+                        //Code for the logs
+                        $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+        
+                        mysqli_query($conn, $sql_logs);
+                    } else {
+                        $message = "Error updating user";
+                        $status = "error";
+                    }
+                }else{
+                    //Encrypt the password
+                    // Store a string into the variable which need to be Encrypted
+                    $simple_string = $editPassword;
+                    
+                    // Store the cipher method
+                    $ciphering = "AES-128-CTR";
+        
+                    // Use OpenSSl Encryption method
+                    $iv_length = openssl_cipher_iv_length($ciphering);
+                    $options = 0;
+        
+                    // Non-NULL Initialization Vector for encryption
+                    $encryption_iv = '1234567891011121';
+        
+                    // Store the encryption key
+                    $encryption_key = "DocumentTrackingSystem";
+        
+                    // Use openssl_encrypt() function to encrypt the data
+                    $encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
+        
+                    // Get the old file data
+                    $oldUserData = $functions->getUsersData($editID, $conn);
+        
+                    // Build the SQL query to update the category record
+                    $sql = "UPDATE Users SET ProfilePic = '$profileName', Fullname = '$editFullname', Username = '$editUsername', Password = '$encryption', AccessLevel = '$editAccessLevel', Status = '$editStatus' WHERE users_id_num = '$editID'";
+                    
+                    // Execute the query
+                    if(mysqli_query($conn, $sql)) {
+                        $message = "User updated successfully";
+                        $status = "success";
+        
+                        // Get the new file data
+                        $newUserData = $functions->getUsersData($editID, $conn);
+        
+                        // Put the old and new file data in an array
+                        $UserData = array(
+                            'Old Value' => array(
+                                'Profile Picture' => $oldUserData['ProfilePic'],
+                                'Full Name' => $oldUserData['Fullname'],
+                                'Username' => $oldUserData['Username'],
+                                'Access Level' => $oldUserData['AccessLevel'],
+                                'Status' => $oldUserData['Status']
+                            ),
+                            'New Value' => array(
+                                'Profile Picture' => $newUserData['ProfilePic'],
+                                'Full Name' => $newUserData['Fullname'],
+                                'Username' => $newUserData['Username'],
+                                'Access Level' => $newUserData['AccessLevel'],
+                                'Status' => $newUserData['Status']
+                            )
+                        );
+        
+                        // Construct the description of the change
+                        $description = "Commited a User: <br>";
+                        foreach ($UserData['Old Value'] as $key => $oldValue) {
+                            $newValue = $UserData['New Value'][$key];
+                            $description .= sprintf("%s from %s to %s <br> ", $key, $oldValue, $newValue);
+                        }
+        
+                        $currentDateTime = date('Y-m-d H:i A');
+        
+                        //Code for the logs
+                        $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
+        
+                        mysqli_query($conn, $sql_logs);
+                    } else {
+                        $message = "Error updating user";
+                        $status = "error";
+                    }
                 }
-
-                $currentDateTime = date('Y-m-d H:i A');
-
-                //Code for the logs
-                $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Commit', '$description', '$currentDateTime')";
-
-                mysqli_query($conn, $sql_logs);
-            } else {
-                $message = "Error updating user";
+            }else{
+                $message = "Error uploading profile picture";
                 $status = "error";
             }
         }
+
+        
     }elseif($_POST['target'] == "files"){
         $office = "";
 

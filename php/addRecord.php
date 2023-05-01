@@ -173,38 +173,86 @@ if($_POST['target'] == "document"){
         // Use openssl_encrypt() function to encrypt the data
         $encryption = openssl_encrypt($simple_string, $ciphering, $encryption_key, $options, $encryption_iv);
 
-        // File uploaded successfully, proceed with database insert
-        $sql = "INSERT INTO Users (Fullname, Username, Password, AccessLevel, Status) VALUES ('$fullName', '$username', '$encryption', '$accessLevel', 'Activated')";
-        $result = mysqli_query($conn, $sql);
-            
-        if ($result) {
-            $message = "User added successfully";
-            $status = "success";
+        if(isset($_FILES['inputProfilePicture']) && $_FILES['inputProfilePicture']['error'] !== UPLOAD_ERR_NO_FILE) {
+            $profilePic = $_FILES['inputProfilePicture']['name'];
+            $tempProfilePic = $_FILES['inputProfilePicture']['tmp_name'];
 
-            $UserData = array(
-                'User Value' => array(
-                    'Full Name' => $fullName,
-                    'Username' => $username,
-                    'Access Level' => $accessLevel,
-                    'Status' => 'Activated'
-                )
-            );
+            $uploadDir = '../asset/img/profile-picture/'; // Upload directory
+            $uploadPath = $uploadDir . basename($profilePic);
 
-            // Construct the description of the change
-            $description = "Added a User: <br>";
-            foreach ($UserData['User Value'] as $key => $Value) {
-                $description .= sprintf("%s: %s<br> ", $key, $Value);
+            if (move_uploaded_file($tempProfilePic, $uploadPath)) {
+                // File uploaded successfully, proceed with database insert
+                $sql = "INSERT INTO Users (ProfilePic, Fullname, Username, Password, AccessLevel, Status) VALUES ('$profilePic', '$fullName', '$username', '$encryption', '$accessLevel', 'Activated')";
+                $result = mysqli_query($conn, $sql);
+                    
+                if ($result) {
+                    $message = "User added successfully";
+                    $status = "success";
+
+                    $UserData = array(
+                        'User Value' => array(
+                            'Profile Picture' => $profilePic,
+                            'Full Name' => $fullName,
+                            'Username' => $username,
+                            'Access Level' => $accessLevel,
+                            'Status' => 'Activated'
+                        )
+                    );
+
+                    // Construct the description of the change
+                    $description = "Added a User: <br>";
+                    foreach ($UserData['User Value'] as $key => $Value) {
+                        $description .= sprintf("%s: %s<br> ", $key, $Value);
+                    }
+
+                    $currentDateTime = date('Y-m-d H:i A');
+
+                    //Code for the logs
+                    $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+
+                    mysqli_query($conn, $sql_logs);
+                } else {
+                    $message = "Error adding user into database";
+                    $status = "error";
+                }
+            }else {
+                $message = "Error uploading file";
+                $status = "error";
             }
+        } else{
+                // File uploaded successfully, proceed with database insert
+                $sql = "INSERT INTO Users (ProfilePic, Fullname, Username, Password, AccessLevel, Status) VALUES ('default-profile.png', '$fullName', '$username', '$encryption', '$accessLevel', 'Activated')";
+                $result = mysqli_query($conn, $sql);
+                    
+                if ($result) {
+                    $message = "User added successfully";
+                    $status = "success";
 
-            $currentDateTime = date('Y-m-d H:i A');
+                    $UserData = array(
+                        'User Value' => array(
+                            'Full Name' => $fullName,
+                            'Username' => $username,
+                            'Access Level' => $accessLevel,
+                            'Status' => 'Activated'
+                        )
+                    );
 
-            //Code for the logs
-            $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+                    // Construct the description of the change
+                    $description = "Added a User: <br>";
+                    foreach ($UserData['User Value'] as $key => $Value) {
+                        $description .= sprintf("%s: %s<br> ", $key, $Value);
+                    }
 
-            mysqli_query($conn, $sql_logs);
-        } else {
-            $message = "Error adding user into database";
-            $status = "error";
+                    $currentDateTime = date('Y-m-d H:i A');
+
+                    //Code for the logs
+                    $sql_logs = "INSERT INTO Logs (User, LogType, Description, Date) VALUES ('$user_name', 'Add', '$description', '$currentDateTime')";
+
+                    mysqli_query($conn, $sql_logs);
+                } else {
+                    $message = "Error adding user into database";
+                    $status = "error";
+                }
         }
     }else{
         $message = "Please fill all the required fields.";

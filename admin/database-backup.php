@@ -32,6 +32,7 @@
    <script src="../asset/tables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
    <script src="../asset/tables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
    <script src="../js/backup.js"></script>
+   <script src="../js/Login.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">

@@ -10,6 +10,23 @@
                               <h5>User Information</h5>
                            </div>
                            <div class="row">
+                              <div class="col-md-12" id="edit-icon-parent-picture-container">
+                                 <a href="#" target="_blank" id="anchorIconPictureContainer">
+                                    <div id="edit-icon-picture-container">
+                                    </div>
+                                 </a>
+                              </div>
+                              <div class="col-md-12">
+                                    <div class="form-group">
+                                       <label  class="float-left">Profile Picture</label>
+                                       <div class="input-group">
+                                          <div class="custom-file">
+                                             <input type="file" class="custom-file-input" name="editProfilePicture" id="editIconProfilePicture" disabled>
+                                             <label class="custom-file-label" id="editlabelIconProfilePicture" for="editProfilePicture">Choose picture</label>
+                                          </div>
+                                       </div>
+                                    </div>
+                              </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Full Name</label>
@@ -43,13 +60,27 @@
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Password</label>
-                                    <input type="password" class="form-control" id="idEditIconUserPassword" name="nameEditUserPassword" placeholder="**********" disabled>
+                                    <div class="input-group">
+                                       <input type="password" class="form-control" id="idEditIconUserPassword" name="nameEditUserPassword" placeholder="**********" disabled>
+                                       <div class="input-group-append">
+                                          <div class="input-group-text eyeHolder" id="eyeHolder" style="pointer-events: none; background-color: #E9ECEF;">
+                                             <span id="eye-icon-nav1" class="fas fa-eye" onclick="togglePasswordVisibility('idEditIconUserPassword', 'eye-icon-nav1')"></span>
+                                          </div>
+                                       </div>
+                                    </div>
                                  </div>
                               </div>
                               <div class="col-md-6">
                                  <div class="form-group">
                                     <label class="float-left">Confirm Password</label>
-                                    <input type="password" class="form-control" name="nameEditUserConfirmPassword" id="idEditIconUserConfirmPassword" placeholder="**********" disabled>
+                                    <div class="input-group">
+                                       <input type="password" class="form-control" name="nameEditUserConfirmPassword" id="idEditIconUserConfirmPassword" placeholder="**********" disabled>
+                                       <div class="input-group-append">
+                                          <div class="input-group-text eyeHolder" id="eyeHolder" style="pointer-events: none; background-color: #E9ECEF;">
+                                             <span id="eye-icon-nav2" class="fas fa-eye" onclick="togglePasswordVisibility('idEditIconUserConfirmPassword', 'eye-icon-nav2')"></span>
+                                          </div>
+                                       </div>
+                                    </div>
                                  </div>
                               </div>
                            </div>
@@ -74,12 +105,15 @@
 
          if($resultQuery){
             $rowQuery = mysqli_fetch_assoc($resultQuery);
+            $iconUserProfile=$rowQuery['ProfilePic'];
             $iconUserFullname=$rowQuery['Fullname'];
             $iconUserUsername=$rowQuery['Username'];
             $iconUserPassword=$rowQuery['Password'];
             $iconUserAccessLevel=$rowQuery['AccessLevel'];
             $iconUserStatus=$rowQuery['Status'];
          }
+
+         $iconUserProfileFull = "../asset/img/profile-picture/" . $iconUserProfile;
 
          echo "<script>
          document.getElementById('hiddenIconUserId').value = '$id';
@@ -89,6 +123,10 @@
          document.getElementById('idEditIconUserPassword').value = '$iconUserPassword';
          document.getElementById('idEditIconUserConfirmPassword').value = '$iconUserPassword';
          document.getElementById('idEditIconUserAccessLevel').value = '$iconUserAccessLevel';
+         document.getElementById('edit-icon-picture-container').style.backgroundImage = `url(${iconUserProfileFull})`;
+         $('#editlabelIconProfilePicture').text('$iconUserProfile');
+         document.getElementById('anchorIconPictureContainer').href = '$iconUserProfileFull';
+
          </script>";
       ?>
    </div>
