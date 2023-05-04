@@ -198,6 +198,23 @@ function getCitiesEdit(province) {
       });
    }); */
 
+   // Update the label of the custom file input with the name of the selected file
+   $('#editIconProfilePicture').on('change', function() {
+      // Get the name of the selected file
+      var profileName = $(this).val().split('\\').pop();
+      // Update the label with the name of the file
+      $('#editlabelIconProfilePicture').text(profileName);
+
+      const file = this.files[0];
+      const reader = new FileReader();
+
+      reader.addEventListener('load', () => {
+         $('#edit-icon-picture-container').css('background-image', `url(${reader.result})`);
+      });
+
+      reader.readAsDataURL(file);
+   });
+
    $('#inputDlRegions').on('change', function() {
        var region = $(this).val();
        $.ajax({

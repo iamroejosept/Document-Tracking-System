@@ -4,7 +4,7 @@
    session_start();
 
    if(empty($_SESSION['logged_in'])){
-      header('Location: ../index.html');
+      header('Location: ../index.php');
    } 
 ?>  
 
@@ -15,7 +15,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>DOCUTRACE</title>
-   <link rel="icon" href="../asset/img/icon.png" type="image/png">
+   <link rel="icon" href="#" type="image/png">
    <!-- Font Awesome -->
    <link rel="stylesheet" href="../asset/fontawesome/css/all.min.css">
    <link rel="stylesheet" href="../asset/css/adminlte.min.css">
@@ -69,10 +69,28 @@
          </ul>
       </nav>
       <aside class="main-sidebar sidebar-light-primary">
-            <!-- Brand Logo -->
-            <a href="index.php" class="brand-link">
-        <!--  <img src="../asset/img/logo.png" alt="DSMS Logo" width="200"> -->
-        <img src="../asset/img/DOCUTRACE.png" alt="DOCUTRACE Logo" id="docutraceLogo">
+         <!-- Brand Logo -->
+         <a href="index.php" class="brand-link" id="logo_header">
+            <?php
+               $queryLogo ="SELECT * FROM Logo";  
+               $resultLogo = mysqli_query($connect, $queryLogo);
+
+               if($resultLogo != ''){
+                  while($rowLogo = mysqli_fetch_array($resultLogo)){
+                     $logo_picture = $rowLogo['Logo_Picture'];
+                     $logo_name = $rowLogo['Logo_Name'];
+                     echo "
+                        <img src='../asset/img/logo/$logo_picture' alt='DOCUTRACE Logo' id='docutraceLogo'>
+                        <h3 id='logo_title'>$logo_name</h3>
+                     ";
+
+                     // JavaScript to change favicon href
+                     echo "<script>
+                        const favicon = document.querySelector('link[rel=\"icon\"]');
+                        favicon.href = '../asset/img/logo/$logo_picture';
+                     </script>";
+                  }};
+            ?>
          </a>
          <div class="sidebar">
             <nav class="mt-2">
@@ -200,6 +218,12 @@
                            <a href="logs.php" class="nav-link">
                               <i class="nav-icon far fa-circle"></i>
                               <p>Logs</p>
+                           </a>
+                        </li>
+                        <li class="nav-item">
+                           <a href="logo.php" class="nav-link">
+                              <i class="nav-icon far fa-circle"></i>
+                              <p>Logo</p>
                            </a>
                         </li>
                         <li class="nav-item">

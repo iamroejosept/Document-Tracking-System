@@ -1,3 +1,23 @@
+#logo_title{
+   color: rgb(22,94,155);
+   letter-spacing: 0.1em;
+   font-weight: bold;
+}
+
+#docutraceLogo{
+   width: 100px;
+   height: 100px;
+}
+
+#loginDocutraceLogo{
+   width: 150px;
+   height: 150px;
+}
+
+#logo_header, .card-header{
+   text-align: center;
+}
+
 td a.btn{
     font-size: 0.7rem;
 }

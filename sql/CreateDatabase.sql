@@ -68,6 +68,17 @@ CREATE TABLE Logs (
   PRIMARY KEY  (logs_id_num)
 );
 
+## Create Logo table
+CREATE TABLE Logo (
+  logo_id_num int(50) unsigned ZEROFILL auto_increment,
+  Logo_Picture varchar(255) DEFAULT NULL,
+  Logo_Name varchar(255) DEFAULT NULL,
+
+  PRIMARY KEY  (logo_id_num)
+);
+
+INSERT INTO Logo (Logo_Picture, Logo_Name) VALUES (
+                        'default-logo.png', 'DOCUTRACE');
 
 ## Create DEFAULT account for admin
 INSERT INTO Users (Fullname, Username, Password, Status, AccessLevel) VALUES (
